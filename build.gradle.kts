@@ -18,6 +18,7 @@ repositories {
     jcenter()
 }
 val arrow_version = "0.10.4"
+val ktor_version = "1.3.1"
 dependencies {
     // Align versions of all Kotlin components
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
@@ -33,6 +34,8 @@ dependencies {
 
     implementation("khttp:khttp:1.0.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
+    implementation("io.ktor:ktor-html-builder:$ktor_version")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
