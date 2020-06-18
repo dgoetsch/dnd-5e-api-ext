@@ -5,7 +5,7 @@ Mending
 Minor Illusion
 Burning Hands
 Charm Person
+Chromatic Orb
 Disguise Self
-Witch Bolt
 Detect Thoughts
 Fireball

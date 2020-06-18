@@ -24,12 +24,6 @@ internal data class FileResourceLoader<T>(
         }
     }
 
-    companion object {
-        data class NotFound(val resourceType: String, val name: String): Throwable("Could not find $resourceType with name: $name")
-        data class ToManyResources(val resourceType: String, val name: String): Throwable("More than one $resourceType matched $name")
-        data class BadResponseFormat(val resourceType: String, val name: String, val value: Any): Throwable("$resourceType $name was the wrong format, was ${value}")
-    }
-
     override suspend fun loadResource(name: String): Result<T> = Either.catch {
         val text = File("$resourceType/$name.json").useLines { lines ->
             lines.joinToString("")

@@ -14,7 +14,6 @@ internal data class MultiResourceLoader<T>(val loaders: List<ResourceLoader<T>>)
 
 
     override suspend fun loadResource(name: String): Result<T> {
-        println("loading $name")
         return loaders.asFlow().fold(initialResult()) { ongoing, loader ->
             when (ongoing) {
                 is Either.Left<Throwable> -> loader.loadResource(name)

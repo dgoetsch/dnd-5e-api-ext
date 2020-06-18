@@ -37,7 +37,10 @@ fun main(args: Array<String>) {
                 .loadAll()
                 .catch { println(it) }
                 .mapNotNull { when(it) {
-                    is Either.Left<Throwable> -> null
+                    is Either.Left<Throwable> -> {
+                        println(it)
+                        null
+                    }
                     is Either.Right<Spell> -> it.b
                 } }
                 .fold(emptyList<Spell>()) { list, item -> list + item}
