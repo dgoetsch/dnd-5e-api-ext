@@ -1,152 +1,111 @@
 package dandd.character.automation.generator
 
+import arrow.core.Either
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import java.io.File
-import java.lang.RuntimeException
+import dandd.character.automation.source.createLoaderFor
+import dandd.character.automation.source.suspendFlatMap
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 
 
 fun main() {
-    val name = "Sorcerer"
-    val json = File("classes/$name.json").readText()
-    val pkg = "dandd.character.automation"
-    val classInterface = JsonClassInterface(pkg, name, json, ClassRegistrar(pkg))
-    val model = classInterface.modelTree()
+    val objectMapper = jacksonObjectMapper()
 
-    println("NAMED")
-    println(classInterface.classRegistrar.named().entries.joinToString(",\n"))
-    println("======")
-    println("UNNAMED")
-    println(classInterface.classRegistrar.unnamed().joinToString(",\n"))
-    println("======")
+    val targetDirectory = "src/generated/kotlin"
+    val resourcesBaseDirectory = "src/main/resources/api"
+    val urlBase = "https://www.dnd5eapi.co"
+    val pkg = "dandd.character.automation.models"
 
-}
+    val registry =  ModelRegistrar(pkg)
 
-data class JsonClassInterface(
-        val pkg: String,
-        val name: String,
-        val json: String,
-        val classRegistrar: ClassRegistrar) {
-    fun modelTree() = ModelTree(name, pkg, keyValues, classRegistrar)
-    fun generate(): String =
-        """
-            package $pkg
-            
-            ${imports.joinToString("\n")}
-            
-            $classDeclaration
-            $indent${fields.joinToString(",\n$indent")}
-            )
-        """.trimIndent()
-    private val objectMapper = jacksonObjectMapper()
-    private val classDeclaration = "data class $name("
-    private val indent = " ".repeat(classDeclaration.length)
-    private val keyValues: Map<String, Any> =
-            objectMapper
-                    .readValue(json, Map::class.java)
-                    .mapNotNull { entry -> entry.key?.let { key -> entry.value?. let { value -> when(key) {
-                        is String -> key to value
-                        else -> null
-                    } } }}
-                    .toMap()
+    val resources = listOf(
+        "ability-scores" to "AbilityScore",
+        "classes" to "Class",
+        "conditions" to "Condtion",
+        "damage-types" to "DamageType",
+        "equipment-categories" to "EquipmentCategory",
+        "equipment" to "Equipment",
+        "features" to "Feature",
+        "languages" to "Language",
+        "magic-schools" to "MagicSchool",
+//        "monsters" to "Monster",
+        "proficiencies" to "Proficiency",
+        "races" to "Race",
+        "skills" to "Skill",
+        "spellcasting" to "Spellcasting",
+        "spells" to "Spell",
+        "starting-equipment" to "StartingEquipment",
+        "subclasses" to "Subclass",
+        "subraces" to "Subrace",
+        "traits" to "Trait",
+        "weapon-properties" to "WeaponPropert")
 
-    private val fields = keyValues.map { (key, value) -> "val $key: ${findClass(key, value)}" }
-    private val imports = keyValues.map { (_, value) -> "import ${value.javaClass.name}" }.distinct().sorted()
-
-    private val objectChildren = keyValues
-            .mapNotNull { (key, value) ->
-                when(value) {
-                    is Map<*, *> -> key to value
-                    else -> null
-                }
-            }
-    private val listChildren = keyValues
-            .mapNotNull { (key, value) ->
-                when(value) {
-                    is List<*> -> key to value
-                    else -> null
-                }
-            }
-
-
-
-
-    private fun processMapChild(child: Map<*, *>) {
-        val childJson = objectMapper.writeValueAsString(child)
-    }
-    /**->
-     * Todo lookup table
-     */
-    private fun findClass(key: String, value: Any): String = value::class.java.name
-}
-
-class ClassRegistrar(val pkg: String) {
-    private val unnamedSchemas = mutableSetOf<ObjectSchema>()
-
-    private val namedSchemas = mutableMapOf<String, ObjectSchema>()
-
-    fun named() = namedSchemas.toMap()
-    fun unnamed() = unnamedSchemas.toSet().filter {
-        !namedSchemas.containsValue(it)
-    }
-
-    fun register(name: String?, objectSchema: ObjectSchema) {
-        name?.let {
-            namedSchemas.put(name, objectSchema)
-            unnamedSchemas.remove(objectSchema)
-        }?: unnamedSchemas.add(objectSchema)
-    }
-    fun findClass(key: String, value: Any): ClassRef = className(key, value)
-
-    private fun className(key: String, value: Any): ClassRef =
-        when(value) {
-            is Map<*, *> -> ClassRef(pkg, key.split("_").joinToString(separator = "") { it.capitalize() })
-            else -> ClassRef(value.javaClass.packageName, value.javaClass.simpleName)
-        }
-}
-
-data class ClassRef(val pkg: String, val name: String)
-
-
-data class ModelTree(val name: String, val pkg: String, val keyValues: Map<*, *>, val classRegistrar: ClassRegistrar) {
-    val schemas = keyValues.objectSchemas(name)
-
-    private fun Map<*, *>.objectSchemas(name: String? = null):  Set<ObjectSchema> {
-         val thisSchema = ObjectSchema(this.mapNotNull { entry -> entry.key?.let { key -> entry.value?.let { value -> when(key) {
-            is String ->
-                key to classRegistrar.findClass(key, value)
-            else -> null
-        } } } }.toMap())
-
-        classRegistrar.register(name, thisSchema)
-
-        val childSchemas: Set<ObjectSchema> =  this
-                .mapNotNull { entry -> entry.key?.let { key -> entry.value?.let { value -> when(key) {
-                    is String ->
-                        when(value) {
-                            is Map<*, *> -> value.objectSchemas(key)
-                            is List<*> -> value.objectSchemas()
-                            else -> emptySet()
+    runBlocking {
+        resources.map { (resourceName, className) -> async {
+            val loader = createLoaderFor(
+                    urlBase,
+                    resourcesBaseDirectory,
+                    resourceName,
+                    { Either.Right(it) },
+                    { Either.Right(it) },
+                    {
+                        Either.catch {
+                            val name = it.toMap(objectMapper).get("name")
+                            when (name) {
+                                null -> throw RuntimeException("name not found in $it")
+                                else -> name.toString()
+                            }
                         }
-                        else -> null
-                } } } }
-                .flatten()
-                .toSet()
+                    },
+                    {
+                        Either.catch {
+                            val index = it.toMap(objectMapper).get("index")
+                            when (index) {
+                                is String -> index
+                                else -> throw java.lang.RuntimeException("No INdex for $it")
+                            }
+                        }
+                    }
+            )
 
-        return childSchemas + thisSchema
+            loader.loadAll()
+                    .map {
+                        async { it.suspendFlatMap { Either.catch {
+                            val keyValues = it.toMap(objectMapper)
+                            ModelTree(className, pkg, keyValues, registry)
+                        } }
+                    } }
+                    .awaitAll()
+            }
+        }
+                .awaitAll()
+                .flatten()
+                .forEach {
+                    when(it) {
+                        is Either.Left -> {
+                            println("Encountered an error ${it.a}")
+                            it.a.printStackTrace()
+                            null
+                        }
+                        is Either.Right -> it.b
+                    }
+                }
+
+
     }
 
-    private fun List<*>.objectSchemas(): Set<ObjectSchema> = this
-            .mapNotNull {
-                when(it) {
-                    is Map<*, *> -> it.objectSchemas()
-                    is List<*> -> it.objectSchemas()
-                    else -> null
-                }
-            }
-            .flatten()
-            .toSet()
-
+    KotlinClassWriter(pkg, registry.exportDictionary()).writeAll(targetDirectory)
 }
 
+fun String.toMap(mapper: ObjectMapper) =
+        mapper
+                .readValue(this, Map::class.java)
+                .mapNotNull { entry -> entry.key?.let { key -> entry.value?. let { value -> when(key) {
+                    is String -> key to value
+                    else -> null
+                } } }}
+                .toMap()
 
-data class ObjectSchema(val fields: Map<String, ClassRef>)
+

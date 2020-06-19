@@ -19,6 +19,10 @@ repositories {
 }
 val arrow_version = "0.10.4"
 val ktor_version = "1.3.1"
+
+sourceSets.main {
+    java.srcDirs("src/main/java", "src/main/kotlin", "src/generated/java", "src/generated/kotlin")
+}
 dependencies {
     // Align versions of all Kotlin components
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))

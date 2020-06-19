@@ -24,13 +24,16 @@ fun main(args: Array<String>) {
 
     val urlBase = "https://www.dnd5eapi.co"
     val objectMapper = jacksonObjectMapper()
+    val resourcesBaseDirectory = "src/main/resources/api"
 
     val spellLoader = createLoaderFor(
             urlBase,
+            resourcesBaseDirectory,
             "spells",
             { text -> Either.Companion.catch { objectMapper.readValue(text, Spell::class.java) } },
-            { spell -> Either.catch { objectMapper.writeValueAsString(spell) } }
-    )
+            { spell -> Either.catch { objectMapper.writeValueAsString(spell) } },
+            { Either.Right(it.name) },
+            { Either.Right(it.index) })
 
     val spells = runBlocking {
         ResourceOrigin("spells", spellLoader)
