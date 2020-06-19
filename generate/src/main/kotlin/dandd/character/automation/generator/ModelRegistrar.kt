@@ -1,7 +1,8 @@
 package dandd.character.automation.generator
 
 
-class ModelRegistrar(val pkg: String) {
+class ModelRegistrar(val pkg: String,
+val resourceConfigs: List<ResourceConfig>) {
     private val unnamedSchemas = mutableSetOf<ObjectSchema>()
 
     private val namedSchemas = mutableMapOf<String, ObjectSchema>()
@@ -34,11 +35,16 @@ class ModelRegistrar(val pkg: String) {
                         key
                     }
                 }
-                .toList()
+                .toMap()
 
-        val allRegistered = allUnnamed + allNamed
+        val explicitSchemas = resourceConfigs.mapNotNull {
+            allNamed.get(it.className)?.let { schema -> it.className to schema }
+        }.toMap()
 
-        return allRegistered
+        val allRegistered = allUnnamed + allNamed.toList()
+
+        val inferredSchemas =  allRegistered
+                .filter { !explicitSchemas.containsKey(it.first) }
                 .groupBy { it.second }.mapNotNull { (schema, entries) ->
                     when(entries) {
                         emptyList<Pair<String, ObjectSchema>>() -> null
@@ -47,6 +53,8 @@ class ModelRegistrar(val pkg: String) {
                     }
                 }
                 .toMap()
+
+        return explicitSchemas + inferredSchemas
 
 //        throw RuntimeException("not implemented")
 

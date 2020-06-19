@@ -9,33 +9,23 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.72"
     kotlin("kapt") version "1.3.72"
     // Apply the application plugin to add support for building a CLI application.
-    application
 }
 
-subprojects {
-    apply(plugin = "kotlin")
-    apply(plugin = "kotlin-kapt")
-
-    pluginManager.withPlugin("org.gradle.application") {
-        application {
-            // Define the main class for the application.
-            mainClassName = "dandd.character.automation.AppKt"
-        }
-    }
-
+allprojects {
     repositories {
         // Use jcenter for resolving dependencies.
         // You can declare any Maven/Ivy/file repository here.
         mavenCentral()
         jcenter()
     }
+}
+
+subprojects {
+    apply(plugin = "kotlin")
+    apply(plugin = "kotlin-kapt")
 
     val arrow_version = "0.10.4"
     val ktor_version = "1.3.1"
-
-    sourceSets.main {
-        java.srcDirs("src/main/java", "src/main/kotlin", "src/generated/java", "src/generated/kotlin")
-    }
 
     dependencies {
         // Align versions of all Kotlin components
@@ -52,14 +42,14 @@ subprojects {
 
         implementation("khttp:khttp:1.0.0")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
-        implementation("io.ktor:ktor-server-netty:$ktor_version")
-        implementation("io.ktor:ktor-html-builder:$ktor_version")
 
         // Use the Kotlin test library.
         testImplementation("org.jetbrains.kotlin:kotlin-test")
 
         // Use the Kotlin JUnit integration.
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+        implementation("io.ktor:ktor-server-netty:$ktor_version")
+        implementation("io.ktor:ktor-html-builder:$ktor_version")
     }
 }
 

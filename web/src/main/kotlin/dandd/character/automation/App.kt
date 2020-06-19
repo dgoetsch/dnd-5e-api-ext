@@ -4,9 +4,8 @@
 package dandd.character.automation
 
 import arrow.core.Either
-import arrow.core.right
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import dandd.character.automation.model.Spell
+import dandd.character.automation.models.CharacterSpell
 import dandd.character.automation.source.ResourceLoader
 import dandd.character.automation.source.createLoaderFor
 import kotlinx.coroutines.flow.*
@@ -17,7 +16,6 @@ import io.ktor.html.respondHtml
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-typealias Result<T> =  Either<Throwable, T>
 
 
 fun main(args: Array<String>) {
@@ -30,7 +28,7 @@ fun main(args: Array<String>) {
             urlBase,
             resourcesBaseDirectory,
             "spells",
-            { text -> Either.Companion.catch { objectMapper.readValue(text, Spell::class.java) } },
+            { text -> Either.Companion.catch { objectMapper.readValue(text, CharacterSpell::class.java) } },
             { spell -> Either.catch { objectMapper.writeValueAsString(spell) } },
             { Either.Right(it.name) },
             { Either.Right(it.index) })
@@ -44,9 +42,9 @@ fun main(args: Array<String>) {
                         println(it)
                         null
                     }
-                    is Either.Right<Spell> -> it.b
+                    is Either.Right<CharacterSpell> -> it.b
                 } }
-                .fold(emptyList<Spell>()) { list, item -> list + item}
+                .fold(emptyList<CharacterSpell>()) { list, item -> list + item}
     }
 
     val port = 8080

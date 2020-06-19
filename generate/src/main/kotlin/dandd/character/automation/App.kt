@@ -17,35 +17,37 @@ import kotlinx.coroutines.runBlocking
 fun main() {
     val objectMapper = jacksonObjectMapper()
 
-    val targetDirectory = "src/generated"
+    val targetDirectory = "src/main/kotlin"
     val resourcesBaseDirectory = "api-resources"
     val urlBase = "https://www.dnd5eapi.co"
     val pkg = "dandd.character.automation.models"
 
-    val registry = ModelRegistrar(pkg)
 
     val resources = Resources(objectMapper).of {
         listOf(
-                resource("ability-scores", "AbilityScore"),
-                resource("classes" ,  "Class"),
-                resource("conditions" ,  "Condtion"),
-                resource("damage-types" ,  "DamageType"),
-                resource("equipment-categories" ,  "EquipmentCategory"),
-                resource("equipment" ,  "Equipment"),
-                resource("features" ,  "Feature", readName = readIndexField),
-                resource("languages" ,  "Language"),
-                resource("magic-schools" ,  "MagicSchool"),
-                resource("proficiencies" ,  "Proficiency"),
-                resource("races" ,  "Race"),
-                resource("skills" ,  "Skill"),
-                resource("spellcasting" ,  "Spellcasting"),
-                resource("spells" ,  "Spell"),
-                resource("starting-equipment" ,  "StartingEquipment", readName = readIndexField),
-                resource("subclasses" ,  "Subclass"),
-                resource("subraces" ,  "Subrace"),
-                resource("traits" ,  "Trait"),
-                resource("weapon-properties" ,  "WeaponPropert"))
+                resource("ability-scores", "CharacterAbilityScore"),
+                resource("classes" ,  "CharacterClass"),
+                resource("conditions" ,  "CharacterCondtion"),
+                resource("damage-types" ,  "CharacterDamageType"),
+                resource("equipment-categories" ,  "CharacterEquipmentCategory"),
+                resource("equipment" ,  "CharacterEquipment"),
+                resource("features" ,  "CharacterFeature", readName = readIndexField),
+                resource("languages" ,  "CharacterLanguage"),
+                resource("magic-schools" ,  "CharacterMagicSchool"),
+                resource("proficiencies" ,  "CharacterProficiency"),
+                resource("races" ,  "CharacterRace"),
+                resource("skills" ,  "CharacterSkill"),
+                resource("spellcasting" ,  "CharacterSpellcasting"),
+                resource("spells" ,  "CharacterSpell"),
+                resource("starting-equipment" ,  "CharacterStartingEquipment", readName = readIndexField),
+                resource("subclasses" ,  "CharacterSubclass"),
+                resource("subraces" ,  "CharacterSubrace"),
+                resource("traits" ,  "CharacterTrait"),
+                resource("weapon-properties" ,  "CharacterWeaponPropert"))
     }
+
+    val registry = ModelRegistrar(pkg, resources)
+
 
     runBlocking {
         resources.map { (resourceName, className, getName, getId) -> async {

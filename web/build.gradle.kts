@@ -7,4 +7,5 @@ application {
 }
 dependencies {
     implementation(project(":core"))
+    implementation(project(":generate"))
 }

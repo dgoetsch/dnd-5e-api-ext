@@ -1,12 +1,12 @@
 package dandd.character.automation
 
-import dandd.character.automation.model.Spell
+import dandd.character.automation.models.CharacterSpell
 import kotlinx.html.*
 import kotlinx.html.attributes.StringEncoder
 
 data class MainPage(
         val characterName: String,
-        val spells: List<Spell>) {
+        val spells: List<CharacterSpell>) {
 
 }
 
@@ -70,7 +70,7 @@ fun HTML.render(mainPage: MainPage) {
     }
 }
 
-private fun FlowContent.render(spell: Spell) {
+private fun FlowContent.render(spell: CharacterSpell) {
     div(classes = "card") {
         h5(classes = "card-header") {
             +spell.name
