@@ -28,11 +28,14 @@ internal data class MultiResourceLoader<T>(val loaders: List<ResourceLoader<T>>,
     override suspend fun loadAll(excludeIds: Set<String>): List<Result<T>> =
             loaders
                     .asFlow().fold(emptyList<Result<Pair<String, T>>>()) { ongoing, loader ->
+                        val excludes = ongoing.mapNotNull { when(it) {
+                            is Either.Right -> it.b.first
+                            else -> null
+                        } }.toSet() + excludeIds
+
+                        println("loading from ${loader}, excluding $excludes")
                         loader
-                                .loadAll(ongoing.mapNotNull { when(it) {
-                                    is Either.Right -> it.b.first
-                                    else -> null
-                                } }.toSet() + excludeIds)
+                                .loadAll(excludes)
                                 .map { it.suspendFlatMap { t ->
                                     getId(t).map { it to t }
                                 } } + ongoing

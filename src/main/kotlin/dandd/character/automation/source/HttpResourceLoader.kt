@@ -42,24 +42,27 @@ internal data class HttpResourceLoader<T>(val urlBase: String,
                 Either.catch {
                     when (it) {
                         is JSONObject -> {
-                            val id = it.get("index")
+                            val id = it.get("index").toString()
                             if(excludeIds.contains(id)) {
                                 null
                             } else {
-                                println("$id downloading")
+                                println("$resourceType/$id downloading")
                                 val url = it.getString("url")
                                 val response = khttp.get("$urlBase$url")
-                                println("$id done")
+                                println("$resourceType/$id done")
                                 String(response.content)
                             }
                         }
-                        else -> throw RuntimeException("")
+                        else -> throw RuntimeException("$it was not a json object")
                     }
                 }.suspendFlatMap {
                     when(it) {
                         null -> Either.right(it)
                         else -> readingMapper(it)
                     }
+                }.mapLeft {
+                    println("encountered an error while loading resource ${resourceType}: $queryResults")
+                    it
                 }
             } }.awaitAll()
         } } }
@@ -89,7 +92,6 @@ internal data class HttpResourceLoader<T>(val urlBase: String,
             emptyList<Any?>() -> throw NotFound(resourceType, name)
             results.take(1) -> results.first()
             else -> {
-                println("multiple spells matched $name")
                 results
                         .filter {
                             when (it) {

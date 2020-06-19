@@ -29,15 +29,16 @@ internal data class FileResourceLoader<T>(
                 val text = mapResult.b
                 Either.catch {
                     File(getDirectory()).mkdirs()
-                    File("${getDirectory()}/$name.json").writeText(text)
+                    File("${getDirectory()}/${name.escapeFileName()}.json").writeText(text)
                     resource
                 }
             }
         }
     }
 
+
     override suspend fun loadResource(name: String): Result<T> = Either.catch {
-        val text = File("${getDirectory()}$name.json").useLines { lines ->
+        val text = File("${getDirectory()}${name.escapeFileName()}.json").useLines { lines ->
             lines.joinToString("")
         }
 
@@ -52,6 +53,10 @@ internal data class FileResourceLoader<T>(
                     it.map { path -> async { Either
                             .catch { Files.readString(path) }
                             .suspendFlatMap(readingMapper)
+                            .mapLeft {
+                                println("Encountered an error while loading file: ${path.toAbsolutePath()}")
+                                it
+                            }
                     } }.awaitAll()
                 } }
                 .lift()
@@ -61,4 +66,6 @@ internal data class FileResourceLoader<T>(
                         .getOrElse { false }
                 }
     }
+
+    private fun String.escapeFileName() = this.replace("/", "&#47;")
 }
