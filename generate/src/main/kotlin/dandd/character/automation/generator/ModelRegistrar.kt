@@ -1,6 +1,5 @@
 package dandd.character.automation.generator
 
-import java.lang.RuntimeException
 
 class ModelRegistrar(val pkg: String) {
     private val unnamedSchemas = mutableSetOf<ObjectSchema>()

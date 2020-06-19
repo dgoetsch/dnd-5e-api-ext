@@ -3,6 +3,7 @@ package dandd.character.automation.generator
 import arrow.core.Either
 import com.fasterxml.jackson.databind.ObjectMapper
 import dandd.character.automation.Result
+import dandd.character.automation.toMap
 
 class Resources(
         val objectMapper: ObjectMapper

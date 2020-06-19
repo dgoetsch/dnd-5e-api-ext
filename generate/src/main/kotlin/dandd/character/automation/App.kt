@@ -1,26 +1,28 @@
-package dandd.character.automation.generator
+package dandd.character.automation
 
 import arrow.core.Either
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dandd.character.automation.generator.KotlinClassWriter
+import dandd.character.automation.generator.ModelRegistrar
+import dandd.character.automation.generator.ModelTree
+import dandd.character.automation.generator.Resources
 import dandd.character.automation.source.createLoaderFor
 import dandd.character.automation.source.suspendFlatMap
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import java.lang.RuntimeException
 
 
 fun main() {
     val objectMapper = jacksonObjectMapper()
 
-    val targetDirectory = "src/generated/kotlin"
-    val resourcesBaseDirectory = "src/main/resources/api"
+    val targetDirectory = "src/generated"
+    val resourcesBaseDirectory = "api-resources"
     val urlBase = "https://www.dnd5eapi.co"
     val pkg = "dandd.character.automation.models"
 
-    val registry =  ModelRegistrar(pkg)
-
+    val registry = ModelRegistrar(pkg)
 
     val resources = Resources(objectMapper).of {
         listOf(
@@ -93,5 +95,3 @@ fun String.toMap(mapper: ObjectMapper) =
                     else -> null
                 } } }}
                 .toMap()
-
-

@@ -1,5 +1,6 @@
 package dandd.character.automation.generator
 
+import java.lang.Double
 import java.lang.IllegalStateException
 import java.lang.RuntimeException
 
@@ -29,7 +30,8 @@ data class ListSchema(val schema: Schema?): Schema() {
         }
 
         if(schema is ListSchema && other is ListSchema) {
-            return ListSchema(other.schema?.let(schema::merge)?:this)
+            return ListSchema(other.schema?.let(schema::merge)
+                    ?: this)
         }
         if(schema is ObjectSchema && other is ObjectSchema) {
             return ListSchema(schema.computeOptionalFields(other))
@@ -54,7 +56,7 @@ data class ObjectSchema(val fields: Map<String, Schema>): Schema() {
                 "\n${indentStr}>"
     }
 
-    private val upgrades: Map<Schema, Schema> = mapOf(ConcreteSchema(java.lang.Integer::class.java) to ConcreteSchema(java.lang.Double::class.java))
+    private val upgrades: Map<Schema, Schema> = mapOf(ConcreteSchema(Integer::class.java) to ConcreteSchema(Double::class.java))
     fun upgrade(one: Schema, other: Schema): Schema? {
         if(upgrades.get(other) == one) return one
         if(upgrades.get(one) == other) return other
