@@ -8,24 +8,6 @@ interface ResourceLoader<T> {
     suspend fun loadResource(name: String): Result<T>
 }
 
-//fun localLoader(resourceName: String,
-//                readingMapper: suspend (String) -> Result<String>,
-//                writingMapper: suspend (String) -> Result<String>): ResourceLoader<String> =
-//        FileResourceLoader(resourceName, readingMapper, writingMapper)
-//
-//fun loadAllClassLoader(urlBase: String,
-//                       resourceName: String,
-//                       readingMapper: suspend (String) -> Result<String>,
-//                       writingMapper: suspend (String) -> Result<String>,
-//                       getName: suspend (String) -> Result<String>
-//): ResourceLoader<String> {
-//    val fileLoader = FileResourceLoader(resourceName, readingMapper, writingMapper)
-//    return PersistingOnSuccessResourceLoader(
-//            HttpResourceLoader(urlBase, resourceName, readingMapper),
-//            fileLoader,
-//            getName)
-//}
-
 fun <T> createLoaderFor(
         urlBase: String,
         resourcesBaseDirectory: String,

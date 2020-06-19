@@ -1,5 +1,7 @@
 package dandd.character.automation.generator
 
+import java.lang.RuntimeException
+
 class ModelRegistrar(val pkg: String) {
     private val unnamedSchemas = mutableSetOf<ObjectSchema>()
 
@@ -16,20 +18,41 @@ class ModelRegistrar(val pkg: String) {
                     ?.let { namedSchemas.put(name, objectSchema.computeOptionalFields(it)) }
                     ?: namedSchemas.put(name, objectSchema)
             unnamedSchemas.remove(objectSchema)
-        }?: unnamedSchemas.add(objectSchema)
+        } ?: unnamedSchemas.add(objectSchema)
     }
 
-    fun exportDictionary(): Map<String, ObjectSchema> =
-            unnamed()
-                    .map { it.fields.keys.joinToString("") { it.capitalize() }.capitalize() to it }
-                    .toMap() + named()
-                    .mapKeys { (key, _) ->
-                        val key = key.split("_").map { it.capitalize() }.joinToString("")
-                        if(key.matches("[0-9]+.*".toRegex())) {
-                            "_$key"
-                        } else {
-                            key
-                        }
+    fun exportDictionary(): Map<String, ObjectSchema> {
+        val allUnnamed = unnamed()
+                .map { it.fields.computNameFromKeys() to it }
+                .toList()
+
+        val allNamed = named()
+                .mapKeys { (key, _) ->
+                    val key = key.split("_").map { it.capitalize() }.joinToString("")
+                    if (key.matches("[0-9]+.*".toRegex())) {
+                        "_$key"
+                    } else {
+                        key
                     }
-                    .toMap()
+                }
+                .toList()
+
+        val allRegistered = allUnnamed + allNamed
+
+        return allRegistered
+                .groupBy { it.second }.mapNotNull { (schema, entries) ->
+                    when(entries) {
+                        emptyList<Pair<String, ObjectSchema>>() -> null
+                        entries.take(1) -> entries.first()
+                        else -> schema.fields.computNameFromKeys() to schema
+                    }
+                }
+                .toMap()
+
+//        throw RuntimeException("not implemented")
+
+    }
+
+    private fun Map<String, Any>.computNameFromKeys(): String = keys.flatMap { it.split("_") }.map { it.capitalize() }.joinToString("")
+
 }
