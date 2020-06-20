@@ -30,7 +30,6 @@ fun main(args: Array<String>) {
             "spells",
             { text -> Either.Companion.catch { objectMapper.readValue(text, CharacterSpell::class.java) } },
             { spell -> Either.catch { objectMapper.writeValueAsString(spell) } },
-            { Either.Right(it.name) },
             { Either.Right(it.index) })
 
     val spells = runBlocking {

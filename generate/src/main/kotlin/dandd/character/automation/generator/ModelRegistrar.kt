@@ -1,5 +1,7 @@
 package dandd.character.automation.generator
 
+import dandd.character.automation.source.ResourceConfig
+
 
 class ModelRegistrar(val pkg: String,
 val resourceConfigs: List<ResourceConfig>) {

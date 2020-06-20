@@ -11,4 +11,5 @@ rootProject.name = "automation"
 
 include("core")
 include("generate")
+include("api")
 include("web")

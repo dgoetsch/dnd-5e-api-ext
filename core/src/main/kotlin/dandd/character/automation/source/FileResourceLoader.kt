@@ -10,7 +10,6 @@ import kotlinx.coroutines.coroutineScope
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
-import kotlin.coroutines.coroutineContext
 import kotlin.streams.toList
 
 internal data class FileResourceLoader<T>(
@@ -37,8 +36,8 @@ internal data class FileResourceLoader<T>(
     }
 
 
-    override suspend fun loadResource(name: String): Result<T> = Either.catch {
-        val text = File("${getDirectory()}${name.escapeFileName()}.json").useLines { lines ->
+    override suspend fun loadResource(id: String): Result<T> = Either.catch {
+        val text = File("${getDirectory()}/${id.escapeFileName()}.json").useLines { lines ->
             lines.joinToString("")
         }
 

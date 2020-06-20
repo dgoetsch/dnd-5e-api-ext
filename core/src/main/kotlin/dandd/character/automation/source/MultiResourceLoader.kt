@@ -16,10 +16,10 @@ internal data class MultiResourceLoader<T>(val loaders: List<ResourceLoader<T>>,
 
     override suspend fun loadAll(): List<Result<T>> = loadAll(emptySet())
 
-    override suspend fun loadResource(name: String): Result<T> {
+    override suspend fun loadResource(id: String): Result<T> {
         return loaders.asFlow().fold(initialResult()) { ongoing, loader ->
             when (ongoing) {
-                is Either.Left<Throwable> -> loader.loadResource(name)
+                is Either.Left<Throwable> -> loader.loadResource(id)
                 is Either.Right<T> -> ongoing
             }
         }

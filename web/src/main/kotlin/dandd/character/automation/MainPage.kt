@@ -70,58 +70,14 @@ fun HTML.render(mainPage: MainPage) {
     }
 }
 
-private fun FlowContent.render(spell: CharacterSpell) {
-    div(classes = "card") {
-        h5(classes = "card-header") {
-            +spell.name
-            if(spell.ritual) + " (Ritual)"
-        }
-        div(classes = "card-body") {
-            h6(classes = "card-title") {
-                +"Level ${spell.level} ${spell.school.name}"
-            }
-            div(classes = "card-text") {
-                p {
-                    renderField("Casting Time", spell.casting_time)
-                }
-                p {
-                    renderField("Range", spell.range)
-                }
-                p {
-                    renderField("Components", spell.components.joinToString(", "))
-                    spell.material?.let { material -> span(classes = "font-italic" ) { +" ($material)" }}
-                }
-                p {
-                    val concentrationText = if(spell.concentration)
-                        "Concentration, ${spell.duration}"
-                    else
-                        spell.duration
-
-                    renderField("Duration", concentrationText)
-                }
-                spell.desc.forEach { p { +it } }
-                spell.higher_level?.let {
-                    it.take(1).map {
-                        p { renderField("At higher levels", it) }
-                    }
-                    it.drop(1).map { p { +it} }
-                }
-            }
-        }
-        /*
-        <div class="card-body">
-<h5 class="card-title">Special title treatment</h5>
-<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-<a href="#" class="btn btn-primary">Go somewhere</a>
-</div>
-         */
+fun <F: FlowContent> F.renderField(name: String, value: String, additionalTags: P.() -> Unit = {}) {
+    p {
+        span(classes = "font-weight-bold") { +"$name: " }
+        span { +value }
+        additionalTags()
     }
 }
 
-fun FlowContent.renderField(name: String, value: String) {
-    span(classes = "font-weight-bold") { +"$name: " }
-    span { +value }
-}
 private fun FlowContent.crossoriginAnonymous() {
     attributes.put("crossorigin", StringEncoder.encode("crossorigin", "anonymous"))
 }

@@ -1,11 +1,11 @@
-Dancing Lights
-Fire Bolt
-Mage Hand
-Mending
-Minor Illusion
-Burning Hands
-Charm Person
-Chromatic Orb
-Disguise Self
-Detect Thoughts
-Fireball
+dancing-lights
+fire-bolt
+mage-hand
+mending
+minor-illusion
+burning-hands
+charm-person
+chromatic-orb
+disguise-self
+detect-thoughts
+fireball
