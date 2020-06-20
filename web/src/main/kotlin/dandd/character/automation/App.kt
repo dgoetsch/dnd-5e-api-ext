@@ -16,13 +16,15 @@ import io.ktor.html.respondHtml
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+fun readResourceConfigDirectory() =
+        System.getenv("API_RESOURCE_CONFIG_DIRECTORY")?:"api-resources"
 
 
 fun main(args: Array<String>) {
-
     val urlBase = "https://www.dnd5eapi.co"
     val objectMapper = jacksonObjectMapper()
-    val resourcesBaseDirectory = "src/main/resources/api"
+    val resourcesBaseDirectory = readResourcesDirectory()
+    val resourceConfigBaseDir = readResourceConfigDirectory()
 
     val spellLoader = createLoaderFor(
             urlBase,
@@ -33,7 +35,7 @@ fun main(args: Array<String>) {
             { Either.Right(it.index) })
 
     val spells = runBlocking {
-        ResourceOrigin("spells", spellLoader)
+        ResourceOrigin(resourceConfigBaseDir, "spells", spellLoader)
                 .loadAll()
                 .catch { println(it) }
                 .mapNotNull { when(it) {
@@ -62,10 +64,10 @@ fun main(args: Array<String>) {
 
 
 
-data class ResourceOrigin<T>(val resourceType: String, val resourceLoader: ResourceLoader<T>) {
+data class ResourceOrigin<T>(val baseDir: String, val resourceType: String, val resourceLoader: ResourceLoader<T>) {
     suspend fun loadAll(): Flow<Result<T>> {
         val result = Either.catch {
-            File("$resourceType.txt").useLines {
+            File("$baseDir/$resourceType.txt").useLines {
                 it.toList().asFlow()
                         .flatMapConcat { resourceName ->
                             flow {

@@ -15,4 +15,4 @@ fun String.toMap(mapper: ObjectMapper) =
                 .toMap()
 
 fun readResourcesDirectory() =
-        System.getenv("API_RESOURCED_DIRECTORY")?:"api-resources"
+        System.getenv("API_RESOURCE_DIRECTORY")?:"api-resources"
