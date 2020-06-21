@@ -2,6 +2,7 @@ FROM openjdk:14-alpine AS build
 
 RUN apk update && apk add --no-cache unzip
 RUN mkdir -p /home/api
+
 ADD . /home/api/src/
 WORKDIR /home/api/src
 

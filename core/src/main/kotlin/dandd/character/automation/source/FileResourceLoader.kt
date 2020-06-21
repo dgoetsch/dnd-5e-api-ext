@@ -50,8 +50,12 @@ internal data class FileResourceLoader<T>(
         Either.catch { Files.walk(Paths.get(getDirectory())).toList() }
                 .suspendFlatMap { Either.catch {
                     it.map { path -> async { Either
-                            .catch { Files.readString(path) }
-                            .suspendFlatMap(readingMapper)
+                            .catch {
+                                if(path.toFile().isDirectory) null
+                                else if(excludeIds.contains(path.toFile().name.replace(".json", ""))) null
+                                else Files.readString(path)
+                            }
+                            .suspendFlatMapNotNull(readingMapper)
                             .mapLeft {
                                 println("Encountered an error while loading file: ${path.toAbsolutePath()}")
                                 it
@@ -59,11 +63,7 @@ internal data class FileResourceLoader<T>(
                     } }.awaitAll()
                 } }
                 .lift()
-                .filterNot { it
-                        .suspendFlatMap(getId)
-                        .map(excludeIds::contains)
-                        .getOrElse { false }
-                }
+                .filterRightNotNull()
     }
 
     private fun String.escapeFileName() = this.replace("/", "&#47;")
