@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    application
 }
 
 repositories {
@@ -10,10 +9,8 @@ repositories {
     jcenter()
 }
 
-
-application {
-    mainClassName = "dandd.character.automation.AppKt"
-}
 dependencies {
-    implementation(project(":core"))
+    // Align versions of all Kotlin components
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }

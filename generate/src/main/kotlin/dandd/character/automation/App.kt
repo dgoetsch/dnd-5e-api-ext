@@ -1,7 +1,6 @@
 package dandd.character.automation
 
 import arrow.core.Either
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dandd.character.automation.generator.KotlinClassWriter
 import dandd.character.automation.generator.ModelRegistrar
