@@ -11,6 +11,8 @@ repositories {
 }
 
 application {
+    applicationDefaultJvmArgs += "-Dapi.resource.directory=${project.rootDir.toPath()}/api-resources"
+
     mainClassName = "dandd.character.automation.AppKt"
 }
 val ktor_version = "1.3.1"

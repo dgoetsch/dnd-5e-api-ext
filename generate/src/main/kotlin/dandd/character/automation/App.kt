@@ -13,8 +13,13 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 
 
-fun readTargetDirectory() =
-    System.getenv("GENERATED_KOTLIN_TARGET_DIRECTORY")?: "src/main/kotlin"
+fun readTargetDirectory(): String {
+    val taragetDirectory = System.getenv("GENERATED_KOTLIN_TARGET_DIRECTORY")
+            ?: System.getProperty("generated.target.directory")
+            ?: "src/main/kotlin"
+    println("targetDirectory=$taragetDirectory")
+    return taragetDirectory
+}
 
 fun main() {
     val objectMapper = jacksonObjectMapper()
