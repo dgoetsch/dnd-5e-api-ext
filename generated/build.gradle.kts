@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm")
+    kotlin("js")
 }
 
 repositories {
@@ -9,8 +9,9 @@ repositories {
     jcenter()
 }
 
+kotlin.target.browser { }
+
 dependencies {
-    // Align versions of all Kotlin components
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-js")
 }

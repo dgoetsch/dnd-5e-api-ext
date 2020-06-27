@@ -3,6 +3,8 @@ package dandd.character.automation.generator
 import java.io.File
 
 class KotlinClassWriter(val pkg: String, val dictionary: Map<String, ObjectSchema>) {
+    private val transformTypes = mapOf(ConcreteSchema(java.lang.Integer::class.java) to "Int")
+
     fun writeAll(directory: String) {
         val targetDirectory = "$directory/${pkg.split(".").joinToString("/")}"
         File(targetDirectory).mkdirs()
@@ -13,7 +15,7 @@ class KotlinClassWriter(val pkg: String, val dictionary: Map<String, ObjectSchem
     }
 
     private fun ObjectSchema.write(name: String): String {
-        val ignoreImports = setOf("Int", "String", "Map", "List", "Long", "Integer", "Boolean")
+        val ignoreImports = setOf("Int", "String", "Map", "List", "Long", "Integer", "Boolean", "Double")
         val imports = fields
                 .filter {(name, schema) ->
                     when(schema) {
@@ -41,7 +43,7 @@ $indent${fields.map { (name, schema) -> "val ${escapeFieldName(name)}: ${schema.
 
     private fun Schema.writeType(): String =
             when(this) {
-                is ConcreteSchema -> this.name()
+                is ConcreteSchema -> transformTypes[this]?:this.name()
                 is ListSchema -> "List<${this.schema?.writeType()?:"Any"}>"
                 is ObjectSchema -> dictionary.entries.find { it.value == this }?.key ?: "Map<String, Any>"
                 is OptionalSchema -> "${this.schema.writeType()}?"

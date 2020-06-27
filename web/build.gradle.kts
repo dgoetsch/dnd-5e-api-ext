@@ -1,6 +1,5 @@
 plugins {
-    kotlin("jvm")
-    application
+    kotlin("js")
 }
 
 repositories {
@@ -13,13 +12,13 @@ repositories {
 val ktor_version = "1.3.1"
 val arrow_version = "0.10.4"
 
-application {
-    mainClassName = "dandd.character.automation.AppKt"
+kotlin.target.browser {
 }
 
 dependencies {
-    implementation(project(":core"))
     implementation(project(":generated"))
-    implementation("io.ktor:ktor-server-netty:$ktor_version")
-    implementation("io.ktor:ktor-html-builder:$ktor_version")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-js")
+//    implementation("io.ktor:ktor-server-netty:$ktor_version")
+//    implementation("io.ktor:ktor-html-builder:$ktor_version")
 }
