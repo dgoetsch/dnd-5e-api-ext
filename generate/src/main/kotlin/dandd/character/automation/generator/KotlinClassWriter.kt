@@ -67,4 +67,6 @@ $indent${fields.map { (name, schema) -> "val ${escapeFieldName(name)}: ${schema.
             } else {
                 "$name"
             }
+
+
 }
