@@ -16,6 +16,5 @@ fun String.toMap(mapper: ObjectMapper) =
 
 fun readResourcesDirectory(): String {
     val resourcesDirectory = System.getenv("API_RESOURCE_DIRECTORY") ?: System.getProperty("api.resource.directory") ?: "api-resources"
-    println("resourcesDirectory=$resourcesDirectory")
     return resourcesDirectory
 }

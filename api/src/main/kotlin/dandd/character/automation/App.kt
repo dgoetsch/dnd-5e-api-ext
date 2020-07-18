@@ -5,6 +5,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dandd.character.automation.source.Resources
 import dandd.character.automation.source.createLoaderFor
 import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.features.DefaultHeaders
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
@@ -35,6 +37,10 @@ fun main() {
             .toMap()
 
     embeddedServer(Netty, port) {
+        install(DefaultHeaders) {
+            header("Access-Control-Allow-Origin", "http://localhost:8080")
+            header("Access-Control-Allow-Credentials", "true")
+        }
         routing {
             get("/api/{resource}") {
                 call.parameters.get("resource")
