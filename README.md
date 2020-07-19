@@ -31,11 +31,11 @@ To add a custom resource, add the json in a file named
 
 ## Load data & Generate Models
 
-The `generate` project can generate domain models for ui applications based on the json data in the api.
+The `generate` project can generate domain models, clients, and json parsers for kotlin-js applications.
 
 Running `generate` will scrape the entire remote d&d5e api and download the json into `api-resources/`.
 
-Generated files will be in the `generated` project
+Generated files will be in the `web:generated` project
 
 ```shell script
 $ ./gradlew generate:run
@@ -68,10 +68,17 @@ Generates domain models for use in web apps.  Currently supports generating kotl
 
 ### Web submodules (kotlin-js)
 
-#### generated
+#### web:core
+
+Core utilities for kotlin js domains
+* Error Handling
+* Http CLient
+* Json Parsing
+
+#### web:generated
 
 api models, output from the generate module
 
 #### web
 
-Web a web application for accessing d&d 5e api.  Currently a kotlin server in html; should probably be an angular SPA
+Web a web application for accessing d&d 5e api.  Doesn't do much yet.

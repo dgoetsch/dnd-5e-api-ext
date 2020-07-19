@@ -18,7 +18,6 @@ subprojects {
     kotlin.target.browser { }
     
     val ktor_version = "1.3.1"
-    val kotlinWrapperVersion = "16.13.1-pre.110-kotlin-1.3.72"
 
     dependencies {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-js")

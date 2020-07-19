@@ -13,6 +13,12 @@ dependencies {
     implementation("org.jetbrains:kotlin-styled:1.0.0-pre.94-kotlin-1.3.70")
     implementation(npm("styled-components"))
     implementation(npm("inline-style-prefixer"))
+
+    implementation(npm("text-encoding"))
+    implementation(npm("bufferutil"))
+    implementation(npm("utf-8-validate"))
+    implementation(npm("abort-controller"))
+    implementation(npm("fs"))
 }
 
 
