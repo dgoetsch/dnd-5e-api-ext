@@ -81,4 +81,12 @@ api models, output from the generate module
 
 #### web
 
+UNDER CONSTRUCTion- This app is currently a shell that provides API clients, but doesn't have a UI build out.
 Web a web application for accessing d&d 5e api.  Doesn't do much yet.
+
+The app should start for development via gradle:
+```shell script
+$ ./gradlew web:app:run
+```
+
+The app should build as well. However the dockerfile does not work yet
