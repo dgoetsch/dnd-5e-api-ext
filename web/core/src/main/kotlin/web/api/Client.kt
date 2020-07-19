@@ -11,8 +11,10 @@ import web.core.Right
 import web.core.bindRight
 import web.parse.ParseError
 
-class ApiCient(val client: HttpClient) {
-    suspend fun <T> getResource(type: String, name: String, parse: (String) -> Either<ApiClientError, T>): Either<ApiClientError, T> {
+class ApiCient<T>(val client: HttpClient,
+                  val type: String,
+                  val parse: (String) -> Either<ApiClientError, T>) {
+    suspend fun getResource(name: String): Either<ApiClientError, T> {
         val response = client
                 .get<HttpResponse>("http://localhost:8099/api/$type/$name") {}
         val readBody = try {

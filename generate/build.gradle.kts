@@ -13,7 +13,7 @@ repositories {
 
 application {
     this.applicationDefaultJvmArgs += "-Dapi.resource.directory=${project.rootDir.toPath()}/api-resources"
-    this.applicationDefaultJvmArgs += "-Dgenerated.target.directory=${project.rootDir.toPath()}/generated/src/main/kotlin"
+    this.applicationDefaultJvmArgs += "-Dgenerated.target.directory=${project.rootDir.toPath()}/web/generated/src/main/kotlin"
 
     mainClassName = "dandd.character.automation.AppKt"
 }

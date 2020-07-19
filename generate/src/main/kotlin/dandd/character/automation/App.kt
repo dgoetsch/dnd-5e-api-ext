@@ -30,10 +30,12 @@ fun main() {
 
 
     val resources = Resources(objectMapper).dAndDResources()
-    val registry = ModelRegistrar(pkg, resources)
+
 
     runBlocking {
         resources.map { (resourceName, className, getId) -> async {
+            val pkg = "$pkg.${resourceName.toLowerCase().replace("[^a-z]+".toRegex(), ".")}"
+            val registry = ModelRegistrar(pkg, resources)
             val loader = createLoaderFor(
                     urlBase,
                     readResourcesDirectory(),
@@ -51,21 +53,9 @@ fun main() {
                         } }
                         } }
                     .awaitAll()
+            KotlinClassWriter(resourceName, className, pkg, registry.exportDictionary()).writeAll(targetDirectory)
         } }
                 .awaitAll()
-                .flatten()
-                .forEach {
-                    when(it) {
-                        is Either.Left -> {
-                            println("Encountered an error ${it.a}")
-                            null
-                        }
-                        is Either.Right -> it.b
-                    }
-                }
-
-
     }
 
-    KotlinClassWriter(pkg, registry.exportDictionary()).writeAll(targetDirectory)
 }

@@ -7,20 +7,52 @@ import kotlin.js.Json
 interface Parser<T>: RightBinding<ParseError> {
     val node: T
 
-    fun <S> nullable(fn: () -> S): S? =
-        node?.let { fn() }
+    fun <S> readNullableField(name: String,fn: () -> S): S?
+    fun <S> nullable(fn: () -> S): S? = node?.let { fn() }
+    fun <S> String.nullable(fn: () -> S): S? = readNullableField(this, fn)
 
     fun readInt(): Int
     fun readIntField(name: String): Int
 
+    fun int(): Int = readInt()
+    fun String.int(): Int = readIntField(this)
+
+    fun readLong(): Long
+    fun readLongField(name: String): Long
+
+    fun long(): Long = readLong()
+    fun String.long(): Long = readLongField(this)
+
+    fun readDouble(): Double
+    fun readDoubleField(name: String): Double
+
+    fun double(): Double = readDouble()
+    fun String.double(): Double = readDoubleField(this)
+
+    fun readBoolean(): Boolean
+    fun readBooleanField(name: String): Boolean
+
+    fun boolean(): Boolean = readBoolean()
+    fun String.boolean(): Boolean = readBooleanField(this)
+    
     fun readString(): String
     fun readStringField(name: String): String
+
+    fun str(): String = readString()
+    fun String.str(): String = readStringField(this)
 
     fun <T> readObject(body: Parser<Json?>.() -> T): T
     fun <T> readObjectField(name: String, body: Parser<Json?>.() -> T): T
 
+    fun <T> obj(body: Parser<Json?>.() -> T): T = readObject(body)
+    fun <T> String.obj(body: Parser<Json?>.() -> T): T = readObjectField(this, body)
+
     fun <T> readArray(body: Parser<Any?>.() -> T): List<T>
     fun <T> readArrayField(name: String, body: Parser<Any?>.() -> T): List<T>
+
+    fun <T> arr(body: Parser<Any?>.() -> T): List<T> = readArray(body)
+    fun <T> String.arr(body: Parser<Any?>.() -> T): List<T> = readArrayField(this, body)
+
 }
 
 
@@ -30,8 +62,21 @@ fun <I, R> I.parse(comprehension: Parser<I>.() -> R): Either<ParseError, R> =
         }
 
 private data class ParserImpl<T>(val binding: RightBinding<ParseError>, override val node: T): RightBinding<ParseError> by binding, Parser<T> {
+
+    override fun <S> readNullableField(name: String,fn: () -> S): S? =
+        field(name) { nullable(fn) }.bind()
+
     override fun readInt(): Int = parseInt().bind()
     override fun readIntField(name: String): Int = field(name) { readInt() }.bind()
+
+    override fun readLong(): Long = parseLong().bind()
+    override fun readLongField(name: String): Long = field(name) { readLong() }.bind()
+
+    override fun readDouble(): Double = parseDouble().bind()
+    override fun readDoubleField(name: String): Double = field(name) { readDouble() }.bind()
+
+    override fun readBoolean(): Boolean = parseBoolean().bind()
+    override fun readBooleanField(name: String): Boolean = field(name) { readBoolean() }.bind()
 
     override fun readString() = parseString().bind()
     override fun readStringField(name: String) = field(name) { readString() }.bind()
@@ -50,6 +95,21 @@ private data class ParserImpl<T>(val binding: RightBinding<ParseError>, override
 
     private fun parseInt(): Either<ParseError, Int> = when(node) {
         is Int -> Right(node)
+        else -> Left(ExpectedString(node))
+    }
+
+    private fun parseLong(): Either<ParseError, Long> = when(node) {
+        is Long -> Right(node)
+        else -> Left(ExpectedString(node))
+    }
+
+    private fun parseDouble(): Either<ParseError, Double> = when(node) {
+        is Double -> Right(node)
+        else -> Left(ExpectedString(node))
+    }
+
+    private fun parseBoolean(): Either<ParseError, Boolean> = when(node) {
+        is Boolean -> Right(node)
         else -> Left(ExpectedString(node))
     }
 

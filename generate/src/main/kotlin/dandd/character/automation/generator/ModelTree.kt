@@ -11,7 +11,7 @@ data class ModelTree(val name: String, val pkg: String, val keyValues: Map<*, *>
                          is String ->
                              key to when (value) {
                                  is Map<*, *> -> value.schema(key)
-                                 is List<*> -> value.schema()
+                                 is List<*> -> value.schema(key)
                                  else -> ConcreteSchema(value.javaClass)
                              }
                          else -> null
@@ -23,11 +23,11 @@ data class ModelTree(val name: String, val pkg: String, val keyValues: Map<*, *>
         return thisSchema
     }
 
-    private fun List<*>.schema(): ListSchema = this
+    private fun List<*>.schema(key: String): ListSchema = this
             .mapNotNull {
                 when(it) {
-                    is Map<*, *> -> ListSchema(it.schema())
-                    is List<*> -> ListSchema(it.schema())
+                    is Map<*, *> -> ListSchema(it.schema(key))
+                    is List<*> -> ListSchema(it.schema(key))
                     else -> ListSchema(it?.let { ConcreteSchema(it.javaClass) })
                 }
             }

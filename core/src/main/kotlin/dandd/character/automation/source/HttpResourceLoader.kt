@@ -81,11 +81,9 @@ internal data class HttpResourceLoader<T>(val urlBase: String,
     }
 
     override suspend fun loadResource(id: String): Result<T> = Either.catch {
-        println("$id downloading")
         val getResponse =  khttp.get("$urlBase/api/$resourceType/${id.replace("\\s+".toRegex(), "+")}")
 
         val content = String(getResponse.content)
-        println("$id completed downloading")
         readingMapper(content)
     }.flatten()
 }

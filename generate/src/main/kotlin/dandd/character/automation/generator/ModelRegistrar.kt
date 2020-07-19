@@ -10,8 +10,8 @@ val resourceConfigs: List<ResourceConfig>) {
     private val namedSchemas = mutableMapOf<String, ObjectSchema>()
 
     fun named() = namedSchemas.toMap()
-    fun unnamed() = unnamedSchemas.toSet().filter {
-        !namedSchemas.containsValue(it)
+    fun unnamed() = unnamedSchemas.toSet().filter { unnamed ->
+        !namedSchemas.any { named -> unnamed.isInstanceOf(named.value)}
     }
 
     fun register(name: String?, objectSchema: ObjectSchema) {
@@ -57,9 +57,6 @@ val resourceConfigs: List<ResourceConfig>) {
                 .toMap()
 
         return explicitSchemas + inferredSchemas
-
-//        throw RuntimeException("not implemented")
-
     }
 
     private fun Map<String, Any>.computNameFromKeys(): String = keys.flatMap { it.split("_") }.map { it.capitalize() }.joinToString("")

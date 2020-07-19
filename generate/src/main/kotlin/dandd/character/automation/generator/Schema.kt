@@ -6,6 +6,7 @@ import java.lang.RuntimeException
 
 sealed class Schema {
     abstract fun printFmt(indent: Int): String
+    abstract fun isInstanceOf(other: Schema): Boolean
 }
 data class ConcreteSchema(val clazz: Class<*>): Schema() {
     override fun printFmt(indent: Int): String {
@@ -14,9 +15,19 @@ data class ConcreteSchema(val clazz: Class<*>): Schema() {
     }
     fun pkg() = clazz.packageName
     fun name() = clazz.simpleName
+
+    override fun isInstanceOf(other: Schema): Boolean = when(other) {
+        is ConcreteSchema -> this == other
+        else -> false
+    }
 }
 
 data class ListSchema(val schema: Schema?): Schema() {
+
+    override fun isInstanceOf(other: Schema): Boolean = when(other) {
+        is ListSchema -> schema?.let { innerSchema -> other.schema?.let {otherSchema -> innerSchema.isInstanceOf(otherSchema) }}?:true
+        else -> false
+    }
 
     fun merge(other: Schema): ListSchema {
         if(schema == null) return ListSchema(other)
@@ -55,6 +66,18 @@ data class ObjectSchema(val fields: Map<String, Schema>): Schema() {
                 fields.map { (key, value) -> "${value.printFmt(indent + 1)} - $key" }.joinToString("\n") +
                 "\n${indentStr}>"
     }
+
+    override fun isInstanceOf(other: Schema): Boolean = when(other) {
+        is ObjectSchema -> other.fields
+                .filter  { (otherKey, otherSchema) ->
+                      this.fields.containsKey(otherKey)  ||
+                              otherSchema !is OptionalSchema
+                  }
+                  .all { (key, otherScema) -> this.fields.get(key)?.isInstanceOf(otherScema)?:false}
+        else -> false
+    }
+
+
 
     private val upgrades: Map<Schema, Schema> = mapOf(ConcreteSchema(Integer::class.java) to ConcreteSchema(Double::class.java))
     fun upgrade(one: Schema, other: Schema): Schema? {
@@ -122,6 +145,10 @@ data class ObjectSchema(val fields: Map<String, Schema>): Schema() {
             }
 }
 data class OptionalSchema(val schema: Schema): Schema() {
+    override fun isInstanceOf(other: Schema): Boolean = when(other) {
+        is OptionalSchema -> schema.isInstanceOf(other.schema)
+        else -> schema.isInstanceOf(other)
+    }
     override fun printFmt(indent: Int): String {
         val indentStr = " ".repeat(indent)
 
