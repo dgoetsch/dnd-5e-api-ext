@@ -1,17 +1,12 @@
 version: "3.3"
 services:
-#  UNDER CONSTRUCTION
-#  web:
-#    build:
-#      context: .
-#      dockerfile:  Web.Dockerfile
-#    environment:
-#      API_RESOURCE_DIRECTORY: /home/web/api-resources
-#      API_RESOURCE_CONFIG_DIRECTORY: /home/web/config
-#    volumes:
-#      - "./api-resources/:/home/web/api-resources/:rw"
-#      - "./web/src/main/resources/config/:/home/web/config/:rw"
-#    network_mode: host
+  web:
+    ports: 
+      - "80:80" 
+    build:
+      context: .
+      dockerfile:  Web.Dockerfile
+    network_mode: host
   api:
     build:
       context: .
