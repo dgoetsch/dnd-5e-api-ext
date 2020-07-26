@@ -6,8 +6,8 @@ services:
       dockerfile:  Generate.Dockerfile
     environment:
       API_RESOURCE_DIRECTORY: /home/generate/api-resources
-      GENERATED_KOTLIN_TARGET_DIRECTORY: /home/generate/generated/kotlin
+      GENERATED_KOTLIN_TARGET_DIRECTORY: /home/generate/kotlin
     volumes:
       - "./api-resources/:/home/generate/api-resources/:rw"
-      - "./generated/src/main/:/home/generate/generated/:rw"
+      - "./web/src/main/:/home/generate/:rw"
     network_mode: host
