@@ -34,4 +34,4 @@ class ApiCient<T>(val client: HttpClient,
 sealed class ApiClientError
 data class UnsuccessfulRequest(val statusCode: HttpStatusCode, val body: String): ApiClientError()
 data class RequestReadFailed(val e: Exception): ApiClientError()
-data class ClientParseError(val error: ParseError): ApiClientError()
+data class ClientParseError(val responseBody: String, val error: ParseError): ApiClientError()

@@ -52,7 +52,7 @@ $indent${fields.map { (name, schema) -> "val ${escapeFieldName(name)}: ${schema.
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }
             .bindRight { from(it) }
-            .mapLeft { ClientParseError(it) }
+            .mapLeft { ClientParseError(jsonString, it) }
         }
         
         fun from(json: Json?): Either<ParseError, $name> =
@@ -90,7 +90,7 @@ ${writeParserFields().joinToString(",\n")}
             when(this) {
                 is ConcreteSchema -> transformTypes[this]?:this.name()
                 is ListSchema -> "List<${this.schema?.writeType()?:"Any"}>"
-                is ObjectSchema -> dictionary.entries.find { this.isInstanceOf(it.value) }?.key ?: "Map<String, Any>"
+                is ObjectSchema -> dictionary.findType(this)?.key ?: "Map<String, Any>"
                 is OptionalSchema -> "${this.schema.writeType()}?"
             }
 
@@ -114,5 +114,10 @@ ${writeParserFields().joinToString(",\n")}
             }
 
 
+}
+
+fun Map<String, ObjectSchema>.findType(schema: ObjectSchema): Map.Entry<String, ObjectSchema>? {
+    return entries.find { schema == it.value }
+            ?: entries.find { schema.isInstanceOf(it.value) }
 }
 

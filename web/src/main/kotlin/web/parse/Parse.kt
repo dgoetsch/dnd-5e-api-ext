@@ -7,9 +7,8 @@ import kotlin.js.Json
 interface Parser<T>: RightBinding<ParseError> {
     val node: T
 
-    fun <S> readNullableField(name: String,fn: () -> S): S?
-    fun <S> nullable(fn: () -> S): S? = node?.let { fn() }
-    fun <S> String.nullable(fn: () -> S): S? = readNullableField(this, fn)
+    fun <S> readNullableField(name: String, fn:  Parser<Any>.() -> S): S?
+    fun <S> String.nullable(fn: Parser<Any>.() -> S): S? = readNullableField(this, fn)
 
     fun readInt(): Int
     fun readIntField(name: String): Int
@@ -63,8 +62,8 @@ fun <I, R> I.parse(comprehension: Parser<I>.() -> R): Either<ParseError, R> =
 
 private data class ParserImpl<T>(val binding: RightBinding<ParseError>, override val node: T): RightBinding<ParseError> by binding, Parser<T> {
 
-    override fun <S> readNullableField(name: String,fn: () -> S): S? =
-        field(name) { nullable(fn) }.bind()
+    override fun <S> readNullableField(name: String, fn: Parser<Any>.() -> S): S? =
+        field(name) { node?.let { it.parse(fn).bind() } }.bind()
 
     override fun readInt(): Int = parseInt().bind()
     override fun readIntField(name: String): Int = field(name) { readInt() }.bind()
@@ -95,34 +94,34 @@ private data class ParserImpl<T>(val binding: RightBinding<ParseError>, override
 
     private fun parseInt(): Either<ParseError, Int> = when(node) {
         is Int -> Right(node)
-        else -> Left(ExpectedString(node))
+        else -> Left(ExpectedInt(JSON.stringify(node)))
     }
 
     private fun parseLong(): Either<ParseError, Long> = when(node) {
         is Long -> Right(node)
-        else -> Left(ExpectedString(node))
+        else -> Left(ExpectedLong(JSON.stringify(node)))
     }
 
     private fun parseDouble(): Either<ParseError, Double> = when(node) {
         is Double -> Right(node)
-        else -> Left(ExpectedString(node))
+        else -> Left(ExpectedDouble(JSON.stringify(node)))
     }
 
     private fun parseBoolean(): Either<ParseError, Boolean> = when(node) {
         is Boolean -> Right(node)
-        else -> Left(ExpectedString(node))
+        else -> Left(ExpectedBoolean(JSON.stringify(node)))
     }
 
     private fun parseString(): Either<ParseError, String> = when(node) {
         is String -> Right(node)
-        else -> Left(ExpectedString(node))
+        else -> Left(ExpectedString(JSON.stringify(node)))
     }
 
     private fun <T> expectObject(parseObject: Parser<Json?>.() -> T): Either<ParseError, T> = Either
             .catching { node as Json? }
             .mapLeft { CastError(it) }
             .bindRight { it.parse(parseObject) }
-            .mapLeft { ExpectedObject(node, it) }
+            .mapLeft { ExpectedObject(JSON.stringify(node), it) }
 
     private fun <Field> field(name: String, parseField: Parser<Any?>.() -> Field): Either<ParseError, Field> =
         expectObject {
@@ -143,7 +142,7 @@ private data class ParserImpl<T>(val binding: RightBinding<ParseError>, override
                     .mapRight { listOf(it) }
         }
 
-        return parseResult.mapLeft { ExpectedArray(this, it) }
+        return parseResult.mapLeft { ExpectedArray(JSON.stringify(node), it) }
     }
 }
 

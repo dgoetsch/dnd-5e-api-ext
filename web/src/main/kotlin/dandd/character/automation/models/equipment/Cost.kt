@@ -19,7 +19,7 @@ data class Cost(
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }
             .bindRight { from(it) }
-            .mapLeft { ClientParseError(it) }
+            .mapLeft { ClientParseError(jsonString, it) }
         }
         
         fun from(json: Json?): Either<ParseError, Cost> =

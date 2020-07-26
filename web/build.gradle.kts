@@ -16,6 +16,18 @@ kotlin{
         dceTask {
             keep("ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io")
         }
+        testTask {
+            useKarma {
+//                useIe()
+//                useSafari()
+//                useFirefox()
+//                useChrome()
+//                useChromeCanary()
+                useChromeHeadless()
+//                usePhantomJS()
+//                useOpera()
+            }
+        }
     }
 }
 

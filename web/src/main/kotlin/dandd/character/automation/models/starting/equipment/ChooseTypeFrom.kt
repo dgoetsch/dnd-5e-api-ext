@@ -13,14 +13,14 @@ import kotlin.js.Json
 data class ChooseTypeFrom(
     val choose: Int,
     val type: String,
-    val from: List<From>
+    val from: List<StartingEquipment>
 ) {
     companion object {
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }
             .bindRight { from(it) }
-            .mapLeft { ClientParseError(it) }
+            .mapLeft { ClientParseError(jsonString, it) }
         }
         
         fun from(json: Json?): Either<ParseError, ChooseTypeFrom> =
@@ -31,7 +31,7 @@ data class ChooseTypeFrom(
                         "type".str(),
                         "from".arr {
                             obj {
-                                From.from(node).bind()
+                                StartingEquipment.from(node).bind()
                             }
                         }
                     )

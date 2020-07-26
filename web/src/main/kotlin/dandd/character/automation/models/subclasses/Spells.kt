@@ -11,7 +11,7 @@ import web.parse.*
 import kotlin.js.Json
 
 data class Spells(
-    val prerequisites: List<UrlName>,
+    val prerequisites: List<Prerequisites>,
     val spell: UrlName
 ) {
     companion object {
@@ -19,7 +19,7 @@ data class Spells(
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }
             .bindRight { from(it) }
-            .mapLeft { ClientParseError(it) }
+            .mapLeft { ClientParseError(jsonString, it) }
         }
         
         fun from(json: Json?): Either<ParseError, Spells> =
@@ -28,7 +28,7 @@ data class Spells(
                     Spells(
                         "prerequisites".arr {
                             obj {
-                                UrlName.from(node).bind()
+                                Prerequisites.from(node).bind()
                             }
                         },
                         "spell".obj {

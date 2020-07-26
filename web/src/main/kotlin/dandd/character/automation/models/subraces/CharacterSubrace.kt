@@ -16,7 +16,7 @@ data class CharacterSubrace(
     val name: String,
     val race: UrlName,
     val desc: String,
-    val ability_bonuses: List<UrlName>,
+    val ability_bonuses: List<AbilityBonuses>,
     val starting_proficiencies: List<UrlName>,
     val languages: List<UrlName>,
     val language_options: ChooseFromType?,
@@ -29,7 +29,7 @@ data class CharacterSubrace(
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }
             .bindRight { from(it) }
-            .mapLeft { ClientParseError(it) }
+            .mapLeft { ClientParseError(jsonString, it) }
         }
         
         fun from(json: Json?): Either<ParseError, CharacterSubrace> =
@@ -45,7 +45,7 @@ data class CharacterSubrace(
                         "desc".str(),
                         "ability_bonuses".arr {
                             obj {
-                                UrlName.from(node).bind()
+                                AbilityBonuses.from(node).bind()
                             }
                         },
                         "starting_proficiencies".arr {

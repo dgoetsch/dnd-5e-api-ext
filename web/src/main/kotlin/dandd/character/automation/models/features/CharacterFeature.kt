@@ -21,7 +21,7 @@ data class CharacterFeature(
     val subclass: UrlName?,
     val prerequisites: List<Prerequisites>?,
     val group: String?,
-    val choice: Prerequisites?,
+    val choice: Choice?,
     val reference: String?
 ) {
     companion object {
@@ -29,7 +29,7 @@ data class CharacterFeature(
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }
             .bindRight { from(it) }
-            .mapLeft { ClientParseError(it) }
+            .mapLeft { ClientParseError(jsonString, it) }
         }
         
         fun from(json: Json?): Either<ParseError, CharacterFeature> =
@@ -66,7 +66,7 @@ data class CharacterFeature(
                         },
                         "choice".nullable {
                             obj {
-                                Prerequisites.from(node).bind()
+                                Choice.from(node).bind()
                             }
                         },
                         "reference".nullable {

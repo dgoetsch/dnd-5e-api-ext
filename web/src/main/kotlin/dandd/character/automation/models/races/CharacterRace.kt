@@ -28,7 +28,7 @@ data class CharacterRace(
     val url: String,
     val starting_proficiency_options: ChooseTypeFrom?,
     val trait_options: ChooseTypeFrom?,
-    val ability_bonus_options: ChooseTypeFrom?,
+    val ability_bonus_options: AbilityBonusOptions?,
     val language_options: ChooseTypeFrom?
 ) {
     companion object {
@@ -36,7 +36,7 @@ data class CharacterRace(
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }
             .bindRight { from(it) }
-            .mapLeft { ClientParseError(it) }
+            .mapLeft { ClientParseError(jsonString, it) }
         }
         
         fun from(json: Json?): Either<ParseError, CharacterRace> =
@@ -85,12 +85,12 @@ data class CharacterRace(
                         },
                         "trait_options".nullable {
                             obj {
-                                ChooseTypeFrom.from(node).bind()
+                                ChooseTypeFrom.from(this.node).bind()
                             }
                         },
                         "ability_bonus_options".nullable {
                             obj {
-                                ChooseTypeFrom.from(node).bind()
+                                AbilityBonusOptions.from(node).bind()
                             }
                         },
                         "language_options".nullable {

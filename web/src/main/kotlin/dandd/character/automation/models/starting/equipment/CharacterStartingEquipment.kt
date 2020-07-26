@@ -14,7 +14,7 @@ data class CharacterStartingEquipment(
     val `class`: UrlName,
     val _id: String,
     val index: Int,
-    val starting_equipment: List<From>,
+    val starting_equipment: List<StartingEquipment>,
     val choices_to_make: Int,
     val choice_1: List<ChooseTypeFrom>,
     val choice_2: List<ChooseTypeFrom>,
@@ -28,7 +28,7 @@ data class CharacterStartingEquipment(
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }
             .bindRight { from(it) }
-            .mapLeft { ClientParseError(it) }
+            .mapLeft { ClientParseError(jsonString, it) }
         }
         
         fun from(json: Json?): Either<ParseError, CharacterStartingEquipment> =
@@ -42,7 +42,7 @@ data class CharacterStartingEquipment(
                         "index".int(),
                         "starting_equipment".arr {
                             obj {
-                                From.from(node).bind()
+                                StartingEquipment.from(node).bind()
                             }
                         },
                         "choices_to_make".int(),
