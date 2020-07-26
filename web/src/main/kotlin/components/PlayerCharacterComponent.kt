@@ -1,9 +1,9 @@
 package components
 
-import clients.Clients
+import AppResources
+import copyFrom
 import dandd.character.automation.models.classes.CharacterClass
 import dandd.character.automation.models.races.CharacterRace
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import player.PlayerCharacter
 import react.*
@@ -12,21 +12,22 @@ import react.dom.h1
 import react.dom.span
 import web.core.mapRight
 
-
 external interface PlayerCharacterState: RState {
     var characterRace: CharacterRace?
     var characterClass: CharacterClass?
 }
-external interface PlayerCharacterProps: RProps {
-    var clients: Clients
-    var coroutineScope: CoroutineScope
+external interface PlayerCharacterProps: RProps, AppResources {
     var playerCharacter: PlayerCharacter
 }
 
-fun RBuilder.playerCharacter(handler: PlayerCharacterProps.() -> Unit): ReactElement {
+fun RBuilder.playerCharacter(appResources: AppResources, handler: PlayerCharacterProps.() -> Unit): ReactElement {
     return child(PlayerCharacterComponent::class) {
-        this.attrs(handler)
+        this.attrs {
+            copyFrom(appResources)
+            handler()
+        }
     }
+
 }
 
 class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCharacterProps, PlayerCharacterState>(props) {
@@ -51,6 +52,7 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCh
     }
 
     override fun RBuilder.render() {
+
         h1 {
             +"Player Character"
         }
@@ -68,14 +70,20 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCh
                 +props.playerCharacter.maxHitPoints.toString()
             }
 
-            state.characterRace?.let { model ->
-                characterRace {
-                    characterRace = model
+            div("row") {
+                div("col") {
+                    state.characterRace?.let { model ->
+                        characterRace {
+                            characterRace = model
+                        }
+                    }
                 }
-            }
-            state.characterClass?.let { model ->
-                characterClass {
-                    characterClass = model
+                div("col") {
+                    state.characterClass?.let { model ->
+                        characterClass {
+                            characterClass = model
+                        }
+                    }
                 }
             }
         }

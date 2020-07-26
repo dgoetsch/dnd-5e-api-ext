@@ -1,6 +1,4 @@
 import clients.Clients
-import components.PlayerCharacterComponent
-import components.PlayerCharacterProps
 import components.playerCharacter
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -9,13 +7,15 @@ import react.*
 import react.dom.h1
 import react.dom.render
 import kotlin.browser.document
-
+import kotlin.browser.window
 
 fun main() {
-    document.body!!.insertAdjacentHTML("afterbegin", "<div id='root'></div>" )
-    render(document.getElementById("root")) {
-        child(App::class) {
+    window.onload = {
+        document.body!!.insertAdjacentHTML("afterbegin", "<div class='container' id='root'></div>")
+        render(document.getElementById("root")) {
+            child(App::class) {
 
+            }
         }
     }
 }
@@ -40,10 +40,8 @@ class App: RComponent<RProps, AppState>() {
         }
 
         state.playerCharacters.forEach { model ->
-            playerCharacter {
+            playerCharacter(state) {
                 playerCharacter = model
-                coroutineScope = state.coroutineScope
-                clients = state.clients
             }
         }
     }

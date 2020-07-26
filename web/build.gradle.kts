@@ -6,7 +6,18 @@ plugins {
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
+
+    //transitive dependencies for kvision
+    maven {
+        url = uri("https://dl.bintray.com/gbaldeck/kotlin")
+        metadataSources {
+            mavenPom()
+            artifact()
+        }
+    }
+
     maven("https://kotlin.bintray.com/kotlin-js-wrappers/")
+    maven("https://dl.bintray.com/rjaros/kotlin")
     mavenCentral()
     jcenter()
 }
@@ -18,14 +29,7 @@ kotlin{
         }
         testTask {
             useKarma {
-//                useIe()
-//                useSafari()
-//                useFirefox()
-//                useChrome()
-//                useChromeCanary()
                 useChromeHeadless()
-//                usePhantomJS()
-//                useOpera()
             }
         }
     }
@@ -47,6 +51,8 @@ dependencies {
 
     //Kotlin Styled (chapter 3)
     implementation("org.jetbrains:kotlin-styled:1.0.0-pre.94-kotlin-1.3.70")
+    implementation("pl.treksoft:kvision-bootstrap:3.11.2")
+    implementation("pl.treksoft:kvision-bootstrap-css:3.11.2")
     implementation(npm("styled-components"))
     implementation(npm("inline-style-prefixer"))
 
@@ -55,6 +61,7 @@ dependencies {
     implementation(npm("utf-8-validate"))
     implementation(npm("abort-controller"))
     implementation(npm("fs"))
+
 }
 
 
