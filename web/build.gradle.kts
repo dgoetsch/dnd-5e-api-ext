@@ -51,8 +51,7 @@ dependencies {
 
     //Kotlin Styled (chapter 3)
     implementation("org.jetbrains:kotlin-styled:1.0.0-pre.94-kotlin-1.3.70")
-    implementation("pl.treksoft:kvision-bootstrap:3.11.2")
-    implementation("pl.treksoft:kvision-bootstrap-css:3.11.2")
+
     implementation(npm("styled-components"))
     implementation(npm("inline-style-prefixer"))
 
@@ -62,6 +61,9 @@ dependencies {
     implementation(npm("abort-controller"))
     implementation(npm("fs"))
 
+    implementation(npm("jquery", "3.5.1"))
+    implementation(npm("popper.js", "1.16.0"))
+    implementation(npm("bootstrap", "4.5.0"))
 }
 
 

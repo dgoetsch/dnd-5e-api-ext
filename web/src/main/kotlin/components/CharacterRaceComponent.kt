@@ -1,18 +1,23 @@
 package components
 
+import AppResources
+import copyFrom
 import dandd.character.automation.models.races.CharacterRace
 import react.*
 import react.dom.div
 import react.dom.h2
 import react.dom.span
 
-external interface CharacterRaceProps: RProps {
+external interface CharacterRaceProps: RProps, AppResources {
     var characterRace: CharacterRace
 }
 
-fun RBuilder.characterRace(handler: CharacterRaceProps.() -> Unit): ReactElement {
+fun RBuilder.characterRace(parent: AppResources, handler: CharacterRaceProps.() -> Unit): ReactElement {
     return child(CharacterRaceComponent::class) {
-        this.attrs(handler)
+        attrs {
+            copyFrom(parent)
+            handler()
+        }
     }
 }
 

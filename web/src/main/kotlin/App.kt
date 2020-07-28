@@ -2,14 +2,16 @@ import clients.Clients
 import components.playerCharacter
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.css.strong
+import kotlinx.html.ButtonType
 import player.StaticPlayerService
 import react.*
-import react.dom.h1
-import react.dom.render
+import react.dom.*
 import kotlin.browser.document
 import kotlin.browser.window
-
+import kotlinext.js.require
 fun main() {
+    require("bootstrap")
     window.onload = {
         document.body!!.insertAdjacentHTML("afterbegin", "<div class='container' id='root'></div>")
         render(document.getElementById("root")) {
@@ -37,6 +39,32 @@ class App: RComponent<RProps, AppState>() {
     override fun RBuilder.render() {
         h1 {
             +"Hello, React+Kotlin/JS!"
+        }
+
+        div("alert alert-warning alert-dismissible fade show") {
+
+            attrs {
+                set("role", "alert")
+            }
+            strong {
+                +"Whoa there Nelly!"
+            }
+
+            +" This is really important"
+
+            button(classes = "close", type = ButtonType.button) {
+                attrs {
+                    set("data-dismiss", "alert")
+                    set("aria-label", "Close")
+                }
+                span {
+                    attrs {
+                        set("aria-hidden", "true")
+                    }
+                    +"&times;"
+                }
+
+            }
         }
 
         state.playerCharacters.forEach { model ->

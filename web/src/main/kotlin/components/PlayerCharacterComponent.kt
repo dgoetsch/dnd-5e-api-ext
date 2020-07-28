@@ -73,14 +73,14 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCh
             div("row") {
                 div("col") {
                     state.characterRace?.let { model ->
-                        characterRace {
+                        characterRace(props) {
                             characterRace = model
                         }
                     }
                 }
                 div("col") {
                     state.characterClass?.let { model ->
-                        characterClass {
+                        characterClass(props) {
                             characterClass = model
                         }
                     }

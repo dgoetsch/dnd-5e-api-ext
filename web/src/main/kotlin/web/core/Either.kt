@@ -8,6 +8,13 @@ sealed class Either<out L, out R> {
             } catch(e: Exception) {
                 Left(e)
             }
+
+        suspend fun <R> suspendCatching(fn: suspend () -> R): Either<Exception, R> =
+                try {
+                    Right(fn())
+                } catch(e: Exception) {
+                    Left(e)
+                }
     }
     abstract val left: L?
     abstract val right: R?
