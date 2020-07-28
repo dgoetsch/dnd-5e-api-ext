@@ -25,7 +25,7 @@ fun main() {
     val urlBase = "https://www.dnd5eapi.co"
 
     val loaders = resources
-            .map { (name, _, getId) ->
+            .map { (name, _, childResources, getId) ->
                 name to createLoaderFor(
                         urlBase,
                         readResourcesDirectory(),

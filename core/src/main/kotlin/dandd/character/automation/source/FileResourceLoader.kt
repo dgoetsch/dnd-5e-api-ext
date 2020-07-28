@@ -1,8 +1,10 @@
 package dandd.character.automation.source
 
 import arrow.core.Either
+import arrow.core.Right
 import arrow.core.extensions.either.monad.flatten
 import arrow.core.getOrElse
+import arrow.core.right
 import dandd.character.automation.Result
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -11,16 +13,31 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.streams.toList
+private fun String.escapeFileName() = this.replace("/", "&#47;")
 
-internal data class FileResourceLoader<T>(
+internal fun <T>  simpleFileReesourceLoader( resourceType: String,
+                             resourcesBaseDirectory: String,
+                             readingMapper: suspend (String) -> Result<T>,
+                             writingMapper: suspend (T) -> Result<String>): FileResourceLoader<T, String> {
+    return FileResourceLoader(
+            resourceType,
+            resourcesBaseDirectory,
+            readingMapper,
+            writingMapper,
+            { "${it.escapeFileName()}.json" },
+            { Right(it.replace(".json", "")) }
+    )
+}
+internal data class FileResourceLoader<T, ID: Any>(
         val resourceType: String,
         val resourcesBaseDirectory: String,
         val readingMapper: suspend (String) -> Result<T>,
         val writingMapper: suspend (T) -> Result<String>,
-        val getId: suspend (T) -> Result<String>): ResourceLoader<T>, ResourcePersister<T> {
+        val toFileName: (ID) -> String,
+        val fromFileName: (String) -> Result<ID>): ResourceLoader<T, ID>, ResourcePersister<T, ID> {
     private fun getDirectory() = "$resourcesBaseDirectory/$resourceType"
 
-    override suspend fun persistResource(name: String, resource: T): Result<T> {
+    override suspend fun persistResource(name: ID, resource: T): Result<T> {
         val mapResult = writingMapper(resource)
         return when(mapResult) {
             is Either.Left<Throwable> -> mapResult
@@ -28,7 +45,7 @@ internal data class FileResourceLoader<T>(
                 val text = mapResult.b
                 Either.catch {
                     File(getDirectory()).mkdirs()
-                    File("${getDirectory()}/${name.escapeFileName()}.json").writeText(text)
+                    File("${getDirectory()}/${toFileName(name)}").writeText(text)
                     resource
                 }
             }
@@ -36,8 +53,8 @@ internal data class FileResourceLoader<T>(
     }
 
 
-    override suspend fun loadResource(id: String): Result<T> = Either.catch {
-        val text = File("${getDirectory()}/${id.escapeFileName()}.json").useLines { lines ->
+    override suspend fun loadResource(id: ID): Result<T> = Either.catch {
+        val text = File("${getDirectory()}/${toFileName(id)}.json").useLines { lines ->
             lines.joinToString("")
         }
 
@@ -46,13 +63,13 @@ internal data class FileResourceLoader<T>(
 
     override suspend fun loadAll(): List<Result<T>> = loadAll(emptySet())
 
-    override suspend fun loadAll(excludeIds: Set<String>): List<Result<T>> = coroutineScope {
+    override suspend fun loadAll(excludeIds: Set<ID>): List<Result<T>> = coroutineScope {
         Either.catch { Files.walk(Paths.get(getDirectory())).toList() }
                 .suspendFlatMap { Either.catch {
                     it.map { path -> async { Either
                             .catch {
                                 if(path.toFile().isDirectory) null
-                                else if(excludeIds.contains(path.toFile().name.replace(".json", ""))) null
+                                else if(fromFileName(path.toFile().name).exists(excludeIds::contains)) null
                                 else Files.readString(path)
                             }
                             .suspendFlatMapNotNull(readingMapper)
@@ -66,5 +83,4 @@ internal data class FileResourceLoader<T>(
                 .filterRightNotNull()
     }
 
-    private fun String.escapeFileName() = this.replace("/", "&#47;")
 }

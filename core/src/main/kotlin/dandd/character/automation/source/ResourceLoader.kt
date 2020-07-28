@@ -2,10 +2,10 @@ package dandd.character.automation.source
 
 import dandd.character.automation.Result
 
-interface ResourceLoader<T> {
-    suspend fun loadAll(excludeIds: Set<String>): List<Result<T>>
+interface ResourceLoader<T, ID: Any> {
+    suspend fun loadAll(excludeIds: Set<ID>): List<Result<T>>
     suspend fun loadAll(): List<Result<T>>
-    suspend fun loadResource(id: String): Result<T>
+    suspend fun loadResource(id: ID): Result<T>
 }
 
 fun <T> createLoaderFor(
@@ -15,10 +15,10 @@ fun <T> createLoaderFor(
         readingMapper: suspend (String) -> Result<T>,
         writingMapper: suspend (T) -> Result<String>,
         getId: suspend (T) -> Result<String>
-): ResourceLoader<T> {
-    val fileLoader = FileResourceLoader(resourceName, resourcesBaseDirectory, readingMapper, writingMapper, getId)
+): ResourceLoader<T, String> {
+    val fileLoader = simpleFileReesourceLoader(resourceName, resourcesBaseDirectory, readingMapper, writingMapper)
     val httpLoader = PersistingOnSuccessResourceLoader(
-            HttpResourceLoader(urlBase, resourceName, readingMapper),
+            simpleHttpResourceLoader(urlBase, resourceName, readingMapper),
             fileLoader,
             getId)
 
@@ -28,3 +28,16 @@ fun <T> createLoaderFor(
                     httpLoader),
             getId)
 }
+
+//suspend fun <T, C> createLevelsLoader( urlBase: String,
+//                                       resourcesBaseDirectory: String,
+//                                       resourceName: String,
+//                                       readingMapper: suspend (String) -> Result<T>,
+//                                       writingMapper: suspend (T) -> Result<String>,
+//                                       getId: suspend (T) -> Result<String>): (String, T) -> ResourceLoader<C>{
+//    val subResourceName = "levels"
+//    return { id, resource ->
+//        createLoaderFor("$urlBase/api/$resourceName/$id/$subResourceName")
+//    }
+//
+//}

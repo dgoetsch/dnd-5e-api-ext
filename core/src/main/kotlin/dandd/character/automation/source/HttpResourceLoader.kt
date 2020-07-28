@@ -37,55 +37,69 @@ fun <A, B> List<Either<A, B?>>.filterRightNotNull(): List<Either<A, B>> =
             is Either.Left -> it
         } }
 
-internal data class HttpResourceLoader<T>(val urlBase: String,
-                                 val resourceType: String,
-                                 val readingMapper: suspend (String) -> Result<T>): ResourceLoader<T> {
-    override suspend fun loadAll(excludeIds: Set<String>): List<Result<T>> =
-        Either
-                .catch {
-                    khttp.get("$urlBase/api/$resourceType")
-                            .jsonObject
-                            .getJSONArray("results")
-                            .toList()
+fun <T> simpleHttpResourceLoader(urlBase: String,
+                                 resourceType: String,
+                                 readingMapper: suspend (String) -> Result<T>): ResourceLoader<T, String> {
+    return HttpResourceLoader(
+            createRootUrl = { "$urlBase/api/$resourceType" },
+            createSubUrl = { id: String -> "$urlBase/api/$resourceType/${id.replace("\\s+".toRegex(), "+")}" },
+            readingMapper = readingMapper,
+            childIds = { resultEntry: Any ->
+                listOf(Either.catch {
+                    when (resultEntry) {
+                        is JSONObject -> resultEntry.get("index").toString()
+                        else -> throw RuntimeException("$resultEntry was not a json object")
+                    }
+                })
+            }
+
+    )
+}
+
+internal data class HttpResourceLoader<T, ID: Any>(
+        val createRootUrl: () -> String,
+        val createSubUrl: (ID) -> String,
+        val readingMapper: suspend (String) -> Result<T>,
+        val childIds: suspend (Any) -> List<Result<ID>>): ResourceLoader<T, ID> {//: ResourceLoader<T> {
+    override suspend fun loadAll(excludeIds: Set<ID>): List<Result<T>> =
+            Either
+                    .catch {
+                        khttp.get(createRootUrl())
+                                .jsonObject
+                                .getJSONArray("results")
+                                .toList()
+                    }
+                    .suspendFlatMap { queryResults -> Either.catch { coroutineScope {
+                        queryResults
+                                .map { async { childIds(it) } }
+                                .awaitAll()
+                                .flatten()
+                                .map { idResult -> async {
+                                    idResult.suspendFlatMap { id ->
+                                        fetchOrSkip(id, excludeIds)
+                                    }
+                                } }
+                                .awaitAll()
+                                .filterRightNotNull()
+                    } } }
+                    .lift()
+
+
+    private suspend fun fetchOrSkip(id: ID, excludeIds: Set<ID>): Result<T?> =
+                if(excludeIds.contains(id)) {
+                    Either.right(null)
+                } else {
+                    loadResource(id)
                 }
-                .suspendFlatMap { queryResults -> Either.catch { coroutineScope {
-                    queryResults
-                            .map { resultEntry -> async {
-                                fetchOrSkip(resultEntry, excludeIds)
-                            } }
-                            .awaitAll()
-                            .filterRightNotNull()
-                } } }
-                .lift()
-
-
-    private suspend fun fetchOrSkip(resultEntry: Any, excludeIds: Set<String>): Result<T?> =
-        Either.catch {
-            when (resultEntry) {
-                is JSONObject -> resultEntry.get("index").toString()
-                else -> throw RuntimeException("$resultEntry was not a json object")
-            }
-        }.suspendFlatMap{
-            if(excludeIds.contains(it)) {
-                Either.right(null)
-            } else {
-                loadResource(it)
-            }
-        }.mapLeft {
-            println("encountered an error while loading resource ${resourceType}: $resultEntry")
-            it
-        }
 
     override suspend fun loadAll(): List<Result<T>> {
         return loadAll(emptySet())
     }
 
-    override suspend fun loadResource(id: String): Result<T> = Either.catch {
-        val getResponse =  khttp.get("$urlBase/api/$resourceType/${id.replace("\\s+".toRegex(), "+")}")
-
+    override suspend fun loadResource(id: ID): Result<T> = Either.catch {
+        val getResponse =  khttp.get(createSubUrl(id))
         val content = String(getResponse.content)
         readingMapper(content)
     }.flatten()
 }
-
 

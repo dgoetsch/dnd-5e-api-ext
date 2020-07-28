@@ -25,8 +25,9 @@ class Resources(
     fun resource(
             name: String,
             className: String,
+            subResources: List<ResourceConfig> = emptyList(),
             readIndex: suspend (String) -> Result<String> = readIndexField
-    ) = ResourceConfig(name, className, readIndex)
+    ) = ResourceConfig(name, className, subResources, readIndex)
 
     fun dAndDResources() = of {
         listOf(

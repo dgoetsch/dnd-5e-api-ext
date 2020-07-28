@@ -6,10 +6,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
-internal data class PersistingOnSuccessResourceLoader<T>(val loader: ResourceLoader<T>,
-                                                         val persister: ResourcePersister<T>,
-                                                         val getId: suspend (T) -> Result<String>): ResourceLoader<T> {
-    override suspend fun loadResource(id: String): Result<T> {
+internal data class PersistingOnSuccessResourceLoader<T, ID: Any>(val loader: ResourceLoader<T, ID>,
+                                                         val persister: ResourcePersister<T, ID>,
+                                                         val getId: suspend (T) -> Result<ID>): ResourceLoader<T, ID> {
+    override suspend fun loadResource(id: ID): Result<T> {
         val loadResult = loader.loadResource(id)
 
         return when(loadResult) {
@@ -21,7 +21,7 @@ internal data class PersistingOnSuccessResourceLoader<T>(val loader: ResourceLoa
     override suspend fun loadAll(): List<Result<T>> =
         loadAll(emptySet())
 
-    override suspend fun loadAll(excludeIds: Set<String>): List<Result<T>> =
+    override suspend fun loadAll(excludeIds: Set<ID>): List<Result<T>> =
         coroutineScope {
             loader.loadAll(excludeIds).map { either ->
                 async {

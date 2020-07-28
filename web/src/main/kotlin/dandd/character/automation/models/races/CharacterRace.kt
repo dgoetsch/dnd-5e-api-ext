@@ -85,7 +85,7 @@ data class CharacterRace(
                         },
                         "trait_options".nullable {
                             obj {
-                                ChooseTypeFrom.from(this.node).bind()
+                                ChooseTypeFrom.from(node).bind()
                             }
                         },
                         "ability_bonus_options".nullable {

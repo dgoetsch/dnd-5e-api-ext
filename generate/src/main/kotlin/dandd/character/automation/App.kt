@@ -33,7 +33,7 @@ fun main() {
 
 
     runBlocking {
-        resources.map { (resourceName, className, getId) -> async {
+        resources.map { (resourceName, className, _, getId) -> async {
             val pkg = "$pkg.${resourceName.toLowerCase().replace("[^a-z]+".toRegex(), ".")}"
             val registry = ModelRegistrar(pkg, resources)
             val loader = createLoaderFor(
