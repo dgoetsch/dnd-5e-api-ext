@@ -1,6 +1,7 @@
 package dandd.character.automation.source
 
 import arrow.core.Either
+import arrow.core.Right
 import arrow.core.extensions.either.monad.flatten
 import dandd.character.automation.Result
 import kotlinx.coroutines.async
@@ -54,6 +55,31 @@ fun <T> simpleHttpResourceLoader(urlBase: String,
             }
 
     )
+}
+
+internal fun <T> nestedHttpResourceLoader(urlBase: String,
+                                          resourceType: String,
+                                          subResourceType: String,
+                                          readingMapper: suspend (String) -> Result<T>): HttpResourceLoader<T, Pair<String, String>> {
+    return HttpResourceLoader(
+            createRootUrl = { "$urlBase/api/$resourceType" },
+            createSubUrl = { id: Pair<String, String> -> "$urlBase/api/$resourceType/${id.first.replace("\\s+".toRegex(), "+")}/$subResourceType/${id.second.replace("\\s+".toRegex(), "+")}" },
+            readingMapper = readingMapper,
+            childIds = { resultEntry: Any -> Either
+                    .catch {
+                        when (resultEntry) {
+                            is JSONObject -> resultEntry.get("index").toString()
+                            else -> throw RuntimeException("$resultEntry was not a json object")
+                        }
+                    }
+                    .suspendFlatMap { id1 ->
+                        Either.catch {
+                            khttp.get("$urlBase/api/$resourceType/$id1/levels").jsonArray
+                                    .mapIndexed { idx, _ -> Right(id1 to idx.toString()) }
+                        }
+                    }
+                    .lift()
+            })
 }
 
 internal data class HttpResourceLoader<T, ID: Any>(

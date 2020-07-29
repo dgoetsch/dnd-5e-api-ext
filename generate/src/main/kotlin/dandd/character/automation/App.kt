@@ -5,8 +5,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dandd.character.automation.generator.KotlinClassWriter
 import dandd.character.automation.generator.ModelRegistrar
 import dandd.character.automation.generator.ModelTree
+import dandd.character.automation.source.ResourceLoaderFactory
 import dandd.character.automation.source.Resources
-import dandd.character.automation.source.createLoaderFor
 import dandd.character.automation.source.suspendFlatMap
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -22,28 +22,20 @@ fun readTargetDirectory(): String {
 }
 
 fun main() {
-    val objectMapper = jacksonObjectMapper()
     val targetDirectory = readTargetDirectory()
-
     val urlBase = "https://www.dnd5eapi.co"
+    val factory = ResourceLoaderFactory(urlBase, targetDirectory)
+
+    val objectMapper = jacksonObjectMapper()
     val pkg = "dandd.character.automation.models"
 
 
-    val resources = Resources(objectMapper).dAndDResources()
-
+    val resources = Resources(objectMapper).dndResources(factory) + Resources(objectMapper).dndNestedResources(factory)
 
     runBlocking {
-        resources.map { (resourceName, className, _, getId) -> async {
+        resources.map { (resourceName, className, loader) -> async {
             val pkg = "$pkg.${resourceName.toLowerCase().replace("[^a-z]+".toRegex(), ".")}"
             val registry = ModelRegistrar(pkg, resources)
-            val loader = createLoaderFor(
-                    urlBase,
-                    readResourcesDirectory(),
-                    resourceName,
-                    { Either.Right(it) },
-                    { Either.Right(it) },
-                    getId
-            )
 
             loader.loadAll()
                     .map {

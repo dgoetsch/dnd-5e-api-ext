@@ -1,15 +1,13 @@
 package dandd.character.automation.source
 
-import arrow.core.Either
-import arrow.core.Right
+import arrow.core.*
 import arrow.core.extensions.either.monad.flatten
-import arrow.core.getOrElse
-import arrow.core.right
 import dandd.character.automation.Result
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import java.io.File
+import java.lang.RuntimeException
 import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.streams.toList
@@ -28,6 +26,33 @@ internal fun <T>  simpleFileReesourceLoader( resourceType: String,
             { Right(it.replace(".json", "")) }
     )
 }
+
+internal fun <T> nestedResourceFileLoader(
+        resourceType: String,
+        subType: String,
+        resourcesBaseDirectory: String,
+        readingMapper: suspend (String) -> Result<T>,
+        writingMapper: suspend (T) -> Result<String>
+): FileResourceLoader<T, Pair<String, String>> {
+    return FileResourceLoader(
+            "$resourceType/$subType",
+                    resourcesBaseDirectory,
+            readingMapper,
+            writingMapper,
+            { id: Pair<String, String> -> "${id.first}-${id.second}.json"},
+            { fileName: String ->
+                val parts = fileName
+                        .removeSuffix(".json")
+                        .split("-")
+                if(parts.size == 2) {
+                    Right(Pair(parts[0], parts[1]))
+                } else {
+                    Left(RuntimeException("wrong number of parts in $fileName"))
+                }
+            }
+    )
+}
+
 internal data class FileResourceLoader<T, ID: Any>(
         val resourceType: String,
         val resourcesBaseDirectory: String,

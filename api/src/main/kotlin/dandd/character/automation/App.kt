@@ -2,8 +2,8 @@ package dandd.character.automation
 
 import arrow.core.Either
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dandd.character.automation.source.ResourceLoaderFactory
 import dandd.character.automation.source.Resources
-import dandd.character.automation.source.createLoaderFor
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.DefaultHeaders
@@ -21,18 +21,14 @@ import kotlinx.coroutines.coroutineScope
 fun main() {
     val port = 8099
     val objectMapper = jacksonObjectMapper()
-    val resources = Resources(objectMapper).dAndDResources()
     val urlBase = "https://www.dnd5eapi.co"
+    val factory = ResourceLoaderFactory(urlBase, readResourcesDirectory())
+    val resources = Resources(objectMapper).dndResources(factory)
+
 
     val loaders = resources
-            .map { (name, _, childResources, getId) ->
-                name to createLoaderFor(
-                        urlBase,
-                        readResourcesDirectory(),
-                        name,
-                        { Either.Right(it) },
-                        { Either.Right(it) },
-                        getId)
+            .map { (name, _, loader) ->
+                name to loader
             }
             .toMap()
 
