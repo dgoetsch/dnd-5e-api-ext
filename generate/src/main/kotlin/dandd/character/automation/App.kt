@@ -24,7 +24,7 @@ fun readTargetDirectory(): String {
 fun main() {
     val targetDirectory = readTargetDirectory()
     val urlBase = "https://www.dnd5eapi.co"
-    val factory = ResourceLoaderFactory(urlBase, targetDirectory)
+    val factory = ResourceLoaderFactory(urlBase, readResourcesDirectory())
 
     val objectMapper = jacksonObjectMapper()
     val pkg = "dandd.character.automation.models"

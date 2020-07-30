@@ -4,7 +4,7 @@ import dandd.character.automation.source.ResourceConfig
 
 
 class ModelRegistrar(val pkg: String,
-val resourceConfigs: List<ResourceConfig>) {
+val resourceConfigs: List<ResourceConfig<*, *>>) {
     private val unnamedSchemas = mutableSetOf<ObjectSchema>()
 
     private val namedSchemas = mutableMapOf<String, ObjectSchema>()
