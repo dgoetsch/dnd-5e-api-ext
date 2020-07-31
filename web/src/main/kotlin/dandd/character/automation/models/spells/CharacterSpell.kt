@@ -45,14 +45,14 @@ data class CharacterSpell(
                         "index".str(),
                         "name".str(),
                         "desc".arr {
-                            "desc".str()
+                            str()
                         },
                         "range".str(),
                         "components".arr {
-                            "components".str()
+                            str()
                         },
                         "material".nullable {
-                            "material".str()
+                            str()
                         },
                         "ritual".boolean(),
                         "duration".str(),
@@ -63,33 +63,33 @@ data class CharacterSpell(
                             NameUrl.from(node).bind()
                         },
                         "classes".arr {
-                            "classes".obj {
+                            obj {
                                 NameUrl.from(node).bind()
                             }
                         },
                         "subclasses".arr {
-                            "subclasses".obj {
+                            obj {
                                 NameUrl.from(node).bind()
                             }
                         },
                         "url".str(),
                         "higher_level".nullable {
-                            "higher_level".arr {
-                                "higher_level".str()
+                            arr {
+                                str()
                             }
                         }
                     )
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterSpell> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterSpell> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterSpell> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/spells/${index}")
+        suspend fun getCharacterSpell(spells: String) = 
+            getResourceByUri("/api/spells/${spells}")
     }
 
     }

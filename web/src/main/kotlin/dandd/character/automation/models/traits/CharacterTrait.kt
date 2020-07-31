@@ -34,32 +34,32 @@ data class CharacterTrait(
                         "_id".str(),
                         "index".str(),
                         "races".arr {
-                            "races".obj {
+                            obj {
                                 NameUrl.from(node).bind()
                             }
                         },
                         "subraces".arr {
-                            "subraces".obj {
+                            obj {
                                 NameUrl.from(node).bind()
                             }
                         },
                         "name".str(),
                         "desc".arr {
-                            "desc".str()
+                            str()
                         },
                         "url".str()
                     )
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterTrait> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterTrait> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterTrait> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/traits/${index}")
+        suspend fun getCharacterTrait(traits: String) = 
+            getResourceByUri("/api/traits/${traits}")
     }
 
     }

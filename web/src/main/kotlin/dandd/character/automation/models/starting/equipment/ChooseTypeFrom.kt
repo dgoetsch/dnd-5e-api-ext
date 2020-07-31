@@ -30,7 +30,7 @@ data class ChooseTypeFrom(
                         "choose".int(),
                         "type".str(),
                         "from".arr {
-                            "from".obj {
+                            obj {
                                 StartingEquipment.from(node).bind()
                             }
                         }

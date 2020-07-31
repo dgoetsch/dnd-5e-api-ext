@@ -57,108 +57,108 @@ data class ClassSpecific(
                 obj {
                     ClassSpecific(
                         "rage_count".nullable {
-                            "rage_count".int()
+                            int()
                         },
                         "rage_damage_bonus".nullable {
-                            "rage_damage_bonus".int()
+                            int()
                         },
                         "brutal_critical_dice".nullable {
-                            "brutal_critical_dice".int()
+                            int()
                         },
                         "favored_enemies".nullable {
-                            "favored_enemies".int()
+                            int()
                         },
                         "favored_terrain".nullable {
-                            "favored_terrain".int()
+                            int()
                         },
                         "sorcery_points".nullable {
-                            "sorcery_points".int()
+                            int()
                         },
                         "metamagic_known".nullable {
-                            "metamagic_known".int()
+                            int()
                         },
                         "creating_spell_slots".nullable {
-                            "creating_spell_slots".arr {
-                                "creating_spell_slots".obj {
+                            arr {
+                                obj {
                                     CreatingSpellSlots.from(node).bind()
                                 }
                             }
                         },
                         "action_surges".nullable {
-                            "action_surges".int()
+                            int()
                         },
                         "indomitable_uses".nullable {
-                            "indomitable_uses".int()
+                            int()
                         },
                         "extra_attacks".nullable {
-                            "extra_attacks".int()
+                            int()
                         },
                         "invocations_known".nullable {
-                            "invocations_known".int()
+                            int()
                         },
                         "mystic_arcanum_level_6".nullable {
-                            "mystic_arcanum_level_6".int()
+                            int()
                         },
                         "mystic_arcanum_level_7".nullable {
-                            "mystic_arcanum_level_7".int()
+                            int()
                         },
                         "mystic_arcanum_level_8".nullable {
-                            "mystic_arcanum_level_8".int()
+                            int()
                         },
                         "mystic_arcanum_level_9".nullable {
-                            "mystic_arcanum_level_9".int()
+                            int()
                         },
                         "martial_arts".nullable {
-                            "martial_arts".obj {
+                            obj {
                                 DiceCountDiceValue.from(node).bind()
                             }
                         },
                         "ki_points".nullable {
-                            "ki_points".int()
+                            int()
                         },
                         "unarmored_movement".nullable {
-                            "unarmored_movement".int()
+                            int()
                         },
                         "bardic_inspiration_die".nullable {
-                            "bardic_inspiration_die".int()
+                            int()
                         },
                         "song_of_rest_die".nullable {
-                            "song_of_rest_die".int()
+                            int()
                         },
                         "magical_secrets_max_5".nullable {
-                            "magical_secrets_max_5".int()
+                            int()
                         },
                         "magical_secrets_max_7".nullable {
-                            "magical_secrets_max_7".int()
+                            int()
                         },
                         "magical_secrets_max_9".nullable {
-                            "magical_secrets_max_9".int()
+                            int()
                         },
                         "aura_range".nullable {
-                            "aura_range".int()
+                            int()
                         },
                         "wild_shape_max_cr".nullable {
-                            "wild_shape_max_cr".double()
+                            double()
                         },
                         "wild_shape_swim".nullable {
-                            "wild_shape_swim".boolean()
+                            boolean()
                         },
                         "wild_shape_fly".nullable {
-                            "wild_shape_fly".boolean()
+                            boolean()
                         },
                         "arcane_recovery_levels".nullable {
-                            "arcane_recovery_levels".int()
+                            int()
                         },
                         "sneak_attack".nullable {
-                            "sneak_attack".obj {
+                            obj {
                                 DiceCountDiceValue.from(node).bind()
                             }
                         },
                         "channel_divinity_charges".nullable {
-                            "channel_divinity_charges".int()
+                            int()
                         },
                         "destroy_undead_cr".nullable {
-                            "destroy_undead_cr".double()
+                            double()
                         }
                     )
                 }

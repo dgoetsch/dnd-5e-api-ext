@@ -36,12 +36,12 @@ data class CharacterProficiency(
                         "type".str(),
                         "name".str(),
                         "classes".arr {
-                            "classes".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "races".arr {
-                            "races".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
@@ -50,14 +50,14 @@ data class CharacterProficiency(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterProficiency> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterProficiency> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterProficiency> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/proficiencies/${index}")
+        suspend fun getCharacterProficiency(proficiencies: String) = 
+            getResourceByUri("/api/proficiencies/${proficiencies}")
     }
 
     }

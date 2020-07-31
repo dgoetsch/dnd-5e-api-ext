@@ -34,7 +34,7 @@ data class CharacterSkill(
                         "index".str(),
                         "name".str(),
                         "desc".arr {
-                            "desc".str()
+                            str()
                         },
                         "ability_score".obj {
                             AbilityScore.from(node).bind()
@@ -44,14 +44,14 @@ data class CharacterSkill(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterSkill> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterSkill> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterSkill> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/skills/${index}")
+        suspend fun getCharacterSkill(skills: String) = 
+            getResourceByUri("/api/skills/${skills}")
     }
 
     }

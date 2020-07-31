@@ -23,7 +23,7 @@ class Resources(
 //    fun <T> of(body: ResourceLoaderFactory.() -> List<ResourceConfig<T>>): List<ResourceConfig<T>> = body()
 
     fun <T, ID: Any> createResourceConfig(
-            name: String,
+            name: List<String>,
             className: String,
            resourceLoader: ResourceLoader<T, ID>
     ) = ResourceConfig(name, className, resourceLoader)
@@ -33,7 +33,7 @@ class Resources(
 
     val dndResources: ResourceLoaderFactory.() -> List<ResourceConfig<String, String>> = {
         val resource = { name: String, className: String ->
-            createResourceConfig(name, className,
+            createResourceConfig(listOf(name), className,
                     createLoaderFor(name,
                             { Either.Right(it) },
                             { Either.Right(it) },
@@ -64,7 +64,7 @@ class Resources(
     val dndNestedResources: ResourceLoaderFactory.() -> List<ResourceConfig<String, Pair<String, String>>> = {
         val config =
                 ResourceConfig(
-                        "classes-levels",
+                        listOf("classes", "levels"),
                         "CharacterClassLevel",
                         createNestedLoaderFor("classes",
                                 "levels",

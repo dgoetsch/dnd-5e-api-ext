@@ -41,16 +41,16 @@ data class CharacterSubclass(
                         "name".str(),
                         "subclass_flavor".str(),
                         "desc".arr {
-                            "desc".str()
+                            str()
                         },
                         "features".arr {
-                            "features".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "spells".nullable {
-                            "spells".arr {
-                                "spells".obj {
+                            arr {
+                                obj {
                                     Spells.from(node).bind()
                                 }
                             }
@@ -60,14 +60,14 @@ data class CharacterSubclass(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterSubclass> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterSubclass> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterSubclass> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/subclasses/${index}")
+        suspend fun getCharacterSubclass(subclasses: String) = 
+            getResourceByUri("/api/subclasses/${subclasses}")
     }
 
     }

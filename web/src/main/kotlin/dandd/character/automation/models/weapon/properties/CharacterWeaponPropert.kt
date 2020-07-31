@@ -33,21 +33,21 @@ data class CharacterWeaponPropert(
                         "index".str(),
                         "name".str(),
                         "desc".arr {
-                            "desc".str()
+                            str()
                         },
                         "url".str()
                     )
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterWeaponPropert> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterWeaponPropert> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterWeaponPropert> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/weapon-properties/${index}")
+        suspend fun getCharacterWeaponPropert(weaponProperties: String) = 
+            getResourceByUri("/api/weapon-properties/${weaponProperties}")
     }
 
     }

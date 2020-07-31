@@ -30,7 +30,7 @@ data class ProficiencyChoices(
                         "choose".int(),
                         "type".str(),
                         "from".arr {
-                            "from".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         }

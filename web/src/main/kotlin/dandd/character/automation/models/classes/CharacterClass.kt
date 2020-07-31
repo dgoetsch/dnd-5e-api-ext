@@ -41,17 +41,17 @@ data class CharacterClass(
                         "name".str(),
                         "hit_die".int(),
                         "proficiency_choices".arr {
-                            "proficiency_choices".obj {
+                            obj {
                                 ProficiencyChoices.from(node).bind()
                             }
                         },
                         "proficiencies".arr {
-                            "proficiencies".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "saving_throws".arr {
-                            "saving_throws".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
@@ -62,13 +62,13 @@ data class CharacterClass(
                             UrlClass.from(node).bind()
                         },
                         "subclasses".arr {
-                            "subclasses".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "url".str(),
                         "spellcasting".nullable {
-                            "spellcasting".obj {
+                            obj {
                                 UrlClass.from(node).bind()
                             }
                         }
@@ -76,14 +76,14 @@ data class CharacterClass(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterClass> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterClass> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterClass> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/classes/${index}")
+        suspend fun getCharacterClass(classes: String) = 
+            getResourceByUri("/api/classes/${classes}")
     }
 
     }

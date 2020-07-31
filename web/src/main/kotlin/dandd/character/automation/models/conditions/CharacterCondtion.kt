@@ -33,21 +33,21 @@ data class CharacterCondtion(
                         "index".str(),
                         "name".str(),
                         "desc".arr {
-                            "desc".str()
+                            str()
                         },
                         "url".str()
                     )
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterCondtion> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterCondtion> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterCondtion> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/conditions/${index}")
+        suspend fun getCharacterCondtion(conditions: String) = 
+            getResourceByUri("/api/conditions/${conditions}")
     }
 
     }

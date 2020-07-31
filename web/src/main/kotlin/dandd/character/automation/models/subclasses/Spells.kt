@@ -27,7 +27,7 @@ data class Spells(
                 obj {
                     Spells(
                         "prerequisites".arr {
-                            "prerequisites".obj {
+                            obj {
                                 Prerequisites.from(node).bind()
                             }
                         },

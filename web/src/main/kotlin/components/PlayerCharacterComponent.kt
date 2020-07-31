@@ -10,6 +10,7 @@ import react.*
 import react.dom.div
 import react.dom.h1
 import react.dom.span
+import web.core.mapLeft
 import web.core.mapRight
 
 external interface PlayerCharacterState: RState {
@@ -33,15 +34,16 @@ fun RBuilder.playerCharacter(appResources: AppResources, handler: PlayerCharacte
 class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCharacterProps, PlayerCharacterState>(props) {
     override fun PlayerCharacterState.init(props: PlayerCharacterProps) {
         props.coroutineScope.launch {
-            props.clients.races.getResource(props.playerCharacter.race)
-                    .mapRight {model ->
+            props.clients.races.getCharacterRace(props.playerCharacter.race)
+                    .mapRight { model ->
                         setState {
                             characterRace = model
                         }
                     }
+                    .mapLeft { println("error: $it") }
 
             props.playerCharacter.classLevels.forEach { (k, v) ->
-                props.clients.classes.getResource(k)
+                props.clients.classes.getCharacterClass(k)
                         .mapRight { model ->
                             setState {
                                 characterClass = model

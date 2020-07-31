@@ -38,43 +38,43 @@ data class Spellcasting(
                 obj {
                     Spellcasting(
                         "spells_known".nullable {
-                            "spells_known".int()
+                            int()
                         },
                         "spell_slots_level_1".nullable {
-                            "spell_slots_level_1".int()
+                            int()
                         },
                         "spell_slots_level_2".nullable {
-                            "spell_slots_level_2".int()
+                            int()
                         },
                         "spell_slots_level_3".nullable {
-                            "spell_slots_level_3".int()
+                            int()
                         },
                         "spell_slots_level_4".nullable {
-                            "spell_slots_level_4".int()
+                            int()
                         },
                         "spell_slots_level_5".nullable {
-                            "spell_slots_level_5".int()
+                            int()
                         },
                         "cantrips_known".nullable {
-                            "cantrips_known".int()
+                            int()
                         },
                         "spell_slots_level_6".nullable {
-                            "spell_slots_level_6".int()
+                            int()
                         },
                         "spell_slots_level_7".nullable {
-                            "spell_slots_level_7".int()
+                            int()
                         },
                         "spell_slots_level_8".nullable {
-                            "spell_slots_level_8".int()
+                            int()
                         },
                         "spell_slots_level_9".nullable {
-                            "spell_slots_level_9".int()
+                            int()
                         },
                         "url".nullable {
-                            "url".str()
+                            str()
                         },
                         "class".nullable {
-                            "class".str()
+                            str()
                         }
                     )
                 }

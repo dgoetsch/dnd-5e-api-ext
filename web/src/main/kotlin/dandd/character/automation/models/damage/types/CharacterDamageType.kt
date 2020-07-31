@@ -33,21 +33,21 @@ data class CharacterDamageType(
                         "index".str(),
                         "name".str(),
                         "desc".arr {
-                            "desc".str()
+                            str()
                         },
                         "url".str()
                     )
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterDamageType> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterDamageType> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterDamageType> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/damage-types/${index}")
+        suspend fun getCharacterDamageType(damageTypes: String) = 
+            getResourceByUri("/api/damage-types/${damageTypes}")
     }
 
     }

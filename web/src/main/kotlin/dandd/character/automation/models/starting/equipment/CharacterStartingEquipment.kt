@@ -41,39 +41,39 @@ data class CharacterStartingEquipment(
                         "_id".str(),
                         "index".int(),
                         "starting_equipment".arr {
-                            "starting_equipment".obj {
+                            obj {
                                 StartingEquipment.from(node).bind()
                             }
                         },
                         "choices_to_make".int(),
                         "choice_1".arr {
-                            "choice_1".obj {
+                            obj {
                                 ChooseTypeFrom.from(node).bind()
                             }
                         },
                         "choice_2".arr {
-                            "choice_2".obj {
+                            obj {
                                 ChooseTypeFrom.from(node).bind()
                             }
                         },
                         "choice_3".nullable {
-                            "choice_3".arr {
-                                "choice_3".obj {
+                            arr {
+                                obj {
                                     ChooseTypeFrom.from(node).bind()
                                 }
                             }
                         },
                         "choice_4".nullable {
-                            "choice_4".arr {
-                                "choice_4".obj {
+                            arr {
+                                obj {
                                     ChooseTypeFrom.from(node).bind()
                                 }
                             }
                         },
                         "url".str(),
                         "choice_5".nullable {
-                            "choice_5".arr {
-                                "choice_5".obj {
+                            arr {
+                                obj {
                                     ChooseTypeFrom.from(node).bind()
                                 }
                             }
@@ -82,14 +82,14 @@ data class CharacterStartingEquipment(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterStartingEquipment> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterStartingEquipment> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterStartingEquipment> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/starting-equipment/${index}")
+        suspend fun getCharacterStartingEquipment(startingEquipment: String) = 
+            getResourceByUri("/api/starting-equipment/${startingEquipment}")
     }
 
     }

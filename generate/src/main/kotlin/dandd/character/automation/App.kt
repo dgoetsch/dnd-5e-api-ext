@@ -39,8 +39,8 @@ fun main() {
     }
 
     runBlocking {
-        val results = nestedResources.map { (resourceName, className, loader) -> async {
-            val pkg = "$pkg.${resourceName.toLowerCase().replace("[^a-z]+".toRegex(), ".")}"
+        val results = nestedResources.map { (resourceNames, className, loader) -> async {
+            val pkg = "$pkg.${resourceNames.map { it.toLowerCase().replace("[^a-z]+".toRegex(), ".")}.joinToString(".") }"
             val registry = ModelRegistrar(pkg, resources)
 
             loader.loadAll()
@@ -51,9 +51,9 @@ fun main() {
                         } }
                         } }
                     .awaitAll()
-            KotlinClassWriter(className, pkg, registry.exportDictionary(), clientWriterConfig(resourceName.split("-"))).writeAll(targetDirectory)
-        } } + resources.map { (resourceName, className, loader) -> async {
-            val pkg = "$pkg.${resourceName.toLowerCase().replace("[^a-z]+".toRegex(), ".")}"
+            KotlinClassWriter(className, pkg, registry.exportDictionary(), clientWriterConfig(resourceNames)).writeAll(targetDirectory)
+        } } + resources.map { (resourceNames, className, loader) -> async {
+            val pkg = "$pkg.${resourceNames.map { it.toLowerCase().replace("[^a-z]+".toRegex(), ".")}.joinToString(".") }"
             val registry = ModelRegistrar(pkg, resources)
 
             loader.loadAll()
@@ -64,7 +64,7 @@ fun main() {
                         } }
                         } }
                     .awaitAll()
-            KotlinClassWriter(className, pkg, registry.exportDictionary(), clientWriterConfig(resourceName)).writeAll(targetDirectory)
+            KotlinClassWriter(className, pkg, registry.exportDictionary(), clientWriterConfig(resourceNames)).writeAll(targetDirectory)
         } }
 
         results.awaitAll()

@@ -31,16 +31,16 @@ data class Prerequisites(
                     Prerequisites(
                         "type".str(),
                         "proficiency".nullable {
-                            "proficiency".str()
+                            str()
                         },
                         "level".nullable {
-                            "level".int()
+                            int()
                         },
                         "feature".nullable {
-                            "feature".str()
+                            str()
                         },
                         "spell".nullable {
-                            "spell".str()
+                            str()
                         }
                     )
                 }

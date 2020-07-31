@@ -36,28 +36,28 @@ data class CharacterLanguage(
                         "index".str(),
                         "name".str(),
                         "desc".nullable {
-                            "desc".str()
+                            str()
                         },
                         "type".str(),
                         "typical_speakers".arr {
-                            "typical_speakers".str()
+                            str()
                         },
                         "script".nullable {
-                            "script".str()
+                            str()
                         },
                         "url".str()
                     )
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterLanguage> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterLanguage> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterLanguage> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/languages/${index}")
+        suspend fun getCharacterLanguage(languages: String) = 
+            getResourceByUri("/api/languages/${languages}")
     }
 
     }

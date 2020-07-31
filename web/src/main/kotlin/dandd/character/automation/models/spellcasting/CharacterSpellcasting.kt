@@ -41,7 +41,7 @@ data class CharacterSpellcasting(
                             UrlName.from(node).bind()
                         },
                         "info".arr {
-                            "info".obj {
+                            obj {
                                 Info.from(node).bind()
                             }
                         },
@@ -50,14 +50,14 @@ data class CharacterSpellcasting(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterSpellcasting> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterSpellcasting> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterSpellcasting> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/spellcasting/${index}")
+        suspend fun getCharacterSpellcasting(spellcasting: String) = 
+            getResourceByUri("/api/spellcasting/${spellcasting}")
     }
 
     }

@@ -36,7 +36,7 @@ data class Spellcasting(
                 obj {
                     Spellcasting(
                         "spells_known".nullable {
-                            "spells_known".int()
+                            int()
                         },
                         "spell_slots_level_1".int(),
                         "spell_slots_level_2".int(),
@@ -44,19 +44,19 @@ data class Spellcasting(
                         "spell_slots_level_4".int(),
                         "spell_slots_level_5".int(),
                         "cantrips_known".nullable {
-                            "cantrips_known".int()
+                            int()
                         },
                         "spell_slots_level_6".nullable {
-                            "spell_slots_level_6".int()
+                            int()
                         },
                         "spell_slots_level_7".nullable {
-                            "spell_slots_level_7".int()
+                            int()
                         },
                         "spell_slots_level_8".nullable {
-                            "spell_slots_level_8".int()
+                            int()
                         },
                         "spell_slots_level_9".nullable {
-                            "spell_slots_level_9".int()
+                            int()
                         }
                     )
                 }

@@ -40,12 +40,12 @@ data class CharacterClassLevel(
                         "ability_score_bonuses".int(),
                         "prof_bonus".int(),
                         "feature_choices".arr {
-                            "feature_choices".obj {
+                            obj {
                                 NameUrl.from(node).bind()
                             }
                         },
                         "features".arr {
-                            "features".obj {
+                            obj {
                                 NameUrl.from(node).bind()
                             }
                         },
@@ -58,7 +58,7 @@ data class CharacterClassLevel(
                         },
                         "url".str(),
                         "spellcasting".nullable {
-                            "spellcasting".obj {
+                            obj {
                                 Spellcasting.from(node).bind()
                             }
                         }
@@ -66,13 +66,13 @@ data class CharacterClassLevel(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterClassLevel> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterClassLevel> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterClassLevel> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(classes: String, levels: String) = 
+        suspend fun getCharacterClassLevel(classes: String, levels: String) = 
             getResourceByUri("/api/classes/${classes}/levels/${levels}")
     }
 

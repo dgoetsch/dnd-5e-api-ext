@@ -59,111 +59,111 @@ data class CharacterEquipment(
                             NameUrl.from(node).bind()
                         },
                         "gear_category".nullable {
-                            "gear_category".str()
+                            str()
                         },
                         "cost".obj {
                             Cost.from(node).bind()
                         },
                         "weight".nullable {
-                            "weight".double()
+                            double()
                         },
                         "url".str(),
                         "weapon_category".nullable {
-                            "weapon_category".str()
+                            str()
                         },
                         "weapon_range".nullable {
-                            "weapon_range".str()
+                            str()
                         },
                         "category_range".nullable {
-                            "category_range".str()
+                            str()
                         },
                         "damage".nullable {
-                            "damage".obj {
+                            obj {
                                 DamageDiceDamageBonusDamageType.from(node).bind()
                             }
                         },
                         "range".nullable {
-                            "range".obj {
+                            obj {
                                 Range.from(node).bind()
                             }
                         },
                         "properties".nullable {
-                            "properties".arr {
-                                "properties".obj {
+                            arr {
+                                obj {
                                     NameUrl.from(node).bind()
                                 }
                             }
                         },
                         "tool_category".nullable {
-                            "tool_category".str()
+                            str()
                         },
                         "desc".nullable {
-                            "desc".arr {
-                                "desc".str()
+                            arr {
+                                str()
                             }
                         },
                         "vehicle_category".nullable {
-                            "vehicle_category".str()
+                            str()
                         },
                         "speed".nullable {
-                            "speed".obj {
+                            obj {
                                 Cost.from(node).bind()
                             }
                         },
                         "2h_damage".nullable {
-                            "2h_damage".obj {
+                            obj {
                                 DamageDiceDamageBonusDamageType.from(node).bind()
                             }
                         },
                         "contents".nullable {
-                            "contents".arr {
-                                "contents".obj {
+                            arr {
+                                obj {
                                     Contents.from(node).bind()
                                 }
                             }
                         },
                         "capacity".nullable {
-                            "capacity".str()
+                            str()
                         },
                         "armor_category".nullable {
-                            "armor_category".str()
+                            str()
                         },
                         "armor_class".nullable {
-                            "armor_class".obj {
+                            obj {
                                 ArmorClass.from(node).bind()
                             }
                         },
                         "str_minimum".nullable {
-                            "str_minimum".int()
+                            int()
                         },
                         "stealth_disadvantage".nullable {
-                            "stealth_disadvantage".boolean()
+                            boolean()
                         },
                         "quantity".nullable {
-                            "quantity".int()
+                            int()
                         },
                         "throw_range".nullable {
-                            "throw_range".obj {
+                            obj {
                                 ThrowRange.from(node).bind()
                             }
                         },
                         "special".nullable {
-                            "special".arr {
-                                "special".str()
+                            arr {
+                                str()
                             }
                         }
                     )
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterEquipment> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterEquipment> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterEquipment> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/equipment/${index}")
+        suspend fun getCharacterEquipment(equipment: String) = 
+            getResourceByUri("/api/equipment/${equipment}")
     }
 
     }

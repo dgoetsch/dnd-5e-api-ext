@@ -9,9 +9,9 @@ data class ClientWriterConfig(val fieldNames: List<String>,
         ClientMethodWriter(resourceClassName, fieldNames, urlPattern)
 }
 
-fun clientWriterConfig(resourceType: String): ClientWriterConfig {
-    return ClientWriterConfig(listOf("index"), "/api/$resourceType/{}")
-}
+//fun clientWriterConfig(resourceType: String): ClientWriterConfig {
+//    return ClientWriterConfig(listOf("index"), "/api/$resourceType/{}")
+//}
 
 fun clientWriterConfig(resourceTypes: List<String>): ClientWriterConfig {
     return ClientWriterConfig(resourceTypes, "/api/${resourceTypes.map{ "$it/{}" }.joinToString("/")}")
@@ -38,13 +38,13 @@ data class ClientMethodWriter(
             }
 
     val clientCLass = """
-    fun client(httpClient: HttpClient): ApiClient<$resourceClassName> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<$resourceClassName> {
+    class Client(override val httpClient: HttpClient): ApiClient<$resourceClassName> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass($methodParams) = 
+        suspend fun get$resourceClassName($methodParams) = 
             getResourceByUri("$url")
     }
 """
@@ -55,12 +55,12 @@ data class KotlinJsonParserWriter(
         val indentStr: String = "    ") {
 
 
-    fun generateParser(schema: Schema, fieldName: String? = null): String {
+    fun generateParser(schema: Schema, fieldName: String? = null, skipFieldNameForNullable: Boolean = false): String {
         return when(schema) {
-            is ListSchema -> writeParse(schema, fieldName)
-            is ObjectSchema -> writeParse(schema, fieldName)
+            is ListSchema -> writeParse(schema, fieldName, skipFieldNameForNullable)
+            is ObjectSchema -> writeParse(schema, fieldName, skipFieldNameForNullable)
             is OptionalSchema -> writeParse(schema, fieldName)
-            is ConcreteSchema -> writeParse(schema, fieldName)
+            is ConcreteSchema -> writeParse(schema, fieldName, skipFieldNameForNullable)
         }
     }
 
@@ -83,15 +83,18 @@ data class KotlinJsonParserWriter(
 
 
 
-    private fun writeParse(schema: ListSchema, fieldName: String? = null): String {
-        return closureCall("arr", fieldName) {
+    private fun writeParse(schema: ListSchema, fieldName: String? = null, skipFieldName: Boolean = false): String {
+        val  writtenFieldName = if(skipFieldName) null else fieldName
+        return closureCall("arr", writtenFieldName) {
             schema.schema?.let {
-                child().generateParser(it, fieldName)
+                child().generateParser(it, fieldName, true)
             }?:""
         }
     }
-    private fun writeParse(schema: ObjectSchema, fieldName: String? = null): String =
-        closureCall("obj", fieldName) {
+    private fun writeParse(schema: ObjectSchema, fieldName: String? = null, skipFieldName: Boolean = false): String {
+        val  writtenFieldName = if(skipFieldName) null else fieldName
+
+        return closureCall("obj", writtenFieldName) {
             dictionary.findType(schema, fieldName)
                     ?.let { (k, v) -> writeDictionaryParse(k, fieldName) }
                     ?: schema.fields
@@ -100,32 +103,34 @@ data class KotlinJsonParserWriter(
                             }
                             .joinToString("\n")
         }
-
+    }
 
     private fun writeDictionaryParse(className: String, fieldName: String?): String = "$currentIndentation$indentStr$className.from(node).bind()"
 
 
     private fun writeParse(schema: OptionalSchema, fieldName: String? = null): String {
         return closureCall("nullable", fieldName) {
-            child().generateParser(schema.schema, fieldName)
+            child().generateParser(schema.schema, fieldName, true)
         }
     }
 
-    private fun writeParse(schema: ConcreteSchema, fieldName: String? = null): String {
+    private fun writeParse(schema: ConcreteSchema, fieldName: String? = null, skipFieldName: Boolean = false): String {
+        val  writtenFieldName = if(skipFieldName) null else fieldName
+
         if(schema.name() == "Int" || schema.name() == "Integer") {
-            return valueCall("int", fieldName)
+            return valueCall("int", writtenFieldName)
         }
         if(schema.name() == "Long") {
-            return valueCall("long", fieldName)
+            return valueCall("long", writtenFieldName)
         }
         if(schema.name() == "Double") {
-            return valueCall("double", fieldName)
+            return valueCall("double", writtenFieldName)
         }
         if(schema.name() == "Boolean") {
-            return valueCall("boolean", fieldName)
+            return valueCall("boolean", writtenFieldName)
         }
         if(schema.name() == "String") {
-            return valueCall("str", fieldName)
+            return valueCall("str", writtenFieldName)
         }
         throw RuntimeException("unhandled type: $fieldName, $schema")
     }

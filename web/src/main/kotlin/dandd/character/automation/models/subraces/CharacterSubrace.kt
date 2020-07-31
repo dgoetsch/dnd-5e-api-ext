@@ -44,32 +44,32 @@ data class CharacterSubrace(
                         },
                         "desc".str(),
                         "ability_bonuses".arr {
-                            "ability_bonuses".obj {
+                            obj {
                                 AbilityBonuses.from(node).bind()
                             }
                         },
                         "starting_proficiencies".arr {
-                            "starting_proficiencies".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "languages".arr {
-                            "languages".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "language_options".nullable {
-                            "language_options".obj {
+                            obj {
                                 ChooseFromType.from(node).bind()
                             }
                         },
                         "racial_traits".arr {
-                            "racial_traits".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "racial_trait_options".nullable {
-                            "racial_trait_options".obj {
+                            obj {
                                 ChooseFromType.from(node).bind()
                             }
                         },
@@ -78,14 +78,14 @@ data class CharacterSubrace(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterSubrace> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterSubrace> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterSubrace> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/subraces/${index}")
+        suspend fun getCharacterSubrace(subraces: String) = 
+            getResourceByUri("/api/subraces/${subraces}")
     }
 
     }

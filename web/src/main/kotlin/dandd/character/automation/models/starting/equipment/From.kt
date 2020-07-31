@@ -32,8 +32,8 @@ data class From(
                         },
                         "quantity".int(),
                         "prerequisites".nullable {
-                            "prerequisites".arr {
-                                "prerequisites".obj {
+                            arr {
+                                obj {
                                     Prerequisites.from(node).bind()
                                 }
                             }

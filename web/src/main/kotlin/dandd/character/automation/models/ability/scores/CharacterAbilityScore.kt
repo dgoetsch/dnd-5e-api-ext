@@ -36,10 +36,10 @@ data class CharacterAbilityScore(
                         "name".str(),
                         "full_name".str(),
                         "desc".arr {
-                            "desc".str()
+                            str()
                         },
                         "skills".arr {
-                            "skills".obj {
+                            obj {
                                 Skills.from(node).bind()
                             }
                         },
@@ -48,14 +48,14 @@ data class CharacterAbilityScore(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterAbilityScore> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterAbilityScore> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterAbilityScore> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/ability-scores/${index}")
+        suspend fun getCharacterAbilityScore(abilityScores: String) = 
+            getResourceByUri("/api/ability-scores/${abilityScores}")
     }
 
     }

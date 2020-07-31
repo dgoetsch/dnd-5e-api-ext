@@ -25,13 +25,19 @@ fun main() {
     val factory = ResourceLoaderFactory(urlBase, readResourcesDirectory())
     val resources = Resources(objectMapper).dndResources(factory)
 
+    val subResources = Resources(objectMapper).dndNestedResources(factory)
 
     val loaders = resources
             .map { (name, _, loader) ->
-                name to loader
+                name.joinToString("-") to loader
             }
             .toMap()
 
+    val subResourceLoaders = subResources
+            .map { (name, _, loader) ->
+                name.joinToString("-") to loader
+            }
+            .toMap()
     embeddedServer(Netty, port) {
         install(DefaultHeaders) {
             header("Access-Control-Allow-Origin", "http://localhost:8080")
@@ -58,6 +64,25 @@ fun main() {
                                     is Either.Left -> call.respondText(resource.a.message?:"Error", ContentType.Text.Any, HttpStatusCode.InternalServerError)
                                 }
                             } }
+                        }?: call.respond(HttpStatusCode.NotFound)
+            }
+            get("/api/{resource}/{id}/{subResource}/{subId}") {
+                call.parameters.get("resource")?.let {resource ->
+                    call.parameters.get("id")?.let { id ->
+                    call.parameters.get("subResource")?.let { subResource ->
+                    call.parameters.get("subId")?.let { subId -> subResourceLoaders
+                            .get("$resource-$subResource")
+                            ?.let { loader ->
+                                            coroutineScope {
+                                                val resource = loader.loadResource(id to subId)
+                                                when(resource) {
+                                                    is Either.Right -> call.respondText(resource.b, ContentType.Application.Json)
+                                                    is Either.Left -> call.respondText(resource.a.message?:"Error", ContentType.Text.Any, HttpStatusCode.InternalServerError)
+                                                }
+                                            }
+                                        }
+                            } }
+                              }
                         }?: call.respond(HttpStatusCode.NotFound)
             }
         }

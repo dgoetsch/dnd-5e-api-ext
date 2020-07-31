@@ -33,7 +33,7 @@ data class CharacterEquipmentCategory(
                         "index".str(),
                         "name".str(),
                         "equipment".arr {
-                            "equipment".obj {
+                            obj {
                                 Equipment.from(node).bind()
                             }
                         },
@@ -42,14 +42,14 @@ data class CharacterEquipmentCategory(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterEquipmentCategory> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterEquipmentCategory> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterEquipmentCategory> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/equipment-categories/${index}")
+        suspend fun getCharacterEquipmentCategory(equipmentCategories: String) = 
+            getResourceByUri("/api/equipment-categories/${equipmentCategories}")
     }
 
     }

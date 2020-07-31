@@ -30,7 +30,7 @@ data class ArmorClass(
                         "base".int(),
                         "dex_bonus".boolean(),
                         "max_bonus".nullable {
-                            "max_bonus".int()
+                            int()
                         }
                     )
                 }

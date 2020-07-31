@@ -28,7 +28,7 @@ data class Range(
                     Range(
                         "normal".int(),
                         "long".nullable {
-                            "long".int()
+                            int()
                         }
                     )
                 }

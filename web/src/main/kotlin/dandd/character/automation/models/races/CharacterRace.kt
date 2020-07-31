@@ -48,7 +48,7 @@ data class CharacterRace(
                         "name".str(),
                         "speed".int(),
                         "ability_bonuses".arr {
-                            "ability_bonuses".obj {
+                            obj {
                                 AbilityBonuses.from(node).bind()
                             }
                         },
@@ -57,44 +57,44 @@ data class CharacterRace(
                         "size".str(),
                         "size_description".str(),
                         "starting_proficiencies".arr {
-                            "starting_proficiencies".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "languages".arr {
-                            "languages".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "language_desc".str(),
                         "traits".arr {
-                            "traits".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "subraces".arr {
-                            "subraces".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "url".str(),
                         "starting_proficiency_options".nullable {
-                            "starting_proficiency_options".obj {
+                            obj {
                                 ChooseTypeFrom.from(node).bind()
                             }
                         },
                         "trait_options".nullable {
-                            "trait_options".obj {
+                            obj {
                                 ChooseTypeFrom.from(node).bind()
                             }
                         },
                         "ability_bonus_options".nullable {
-                            "ability_bonus_options".obj {
+                            obj {
                                 AbilityBonusOptions.from(node).bind()
                             }
                         },
                         "language_options".nullable {
-                            "language_options".obj {
+                            obj {
                                 ChooseTypeFrom.from(node).bind()
                             }
                         }
@@ -102,14 +102,14 @@ data class CharacterRace(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterRace> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterRace> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterRace> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/races/${index}")
+        suspend fun getCharacterRace(races: String) = 
+            getResourceByUri("/api/races/${races}")
     }
 
     }

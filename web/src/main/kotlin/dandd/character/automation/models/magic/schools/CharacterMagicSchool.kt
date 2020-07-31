@@ -38,14 +38,14 @@ data class CharacterMagicSchool(
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterMagicSchool> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterMagicSchool> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterMagicSchool> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/magic-schools/${index}")
+        suspend fun getCharacterMagicSchool(magicSchools: String) = 
+            getResourceByUri("/api/magic-schools/${magicSchools}")
     }
 
     }

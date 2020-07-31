@@ -40,50 +40,50 @@ data class CharacterFeature(
                             UrlName.from(node).bind()
                         },
                         "desc".arr {
-                            "desc".str()
+                            str()
                         },
                         "_id".str(),
                         "index".str(),
                         "name".str(),
                         "level".nullable {
-                            "level".int()
+                            int()
                         },
                         "url".str(),
                         "subclass".nullable {
-                            "subclass".obj {
+                            obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "prerequisites".nullable {
-                            "prerequisites".arr {
-                                "prerequisites".obj {
+                            arr {
+                                obj {
                                     Prerequisites.from(node).bind()
                                 }
                             }
                         },
                         "group".nullable {
-                            "group".str()
+                            str()
                         },
                         "choice".nullable {
-                            "choice".obj {
+                            obj {
                                 Choice.from(node).bind()
                             }
                         },
                         "reference".nullable {
-                            "reference".str()
+                            str()
                         }
                     )
                 }
             }
         
-    fun client(httpClient: HttpClient): ApiClient<CharacterFeature> =
+    fun client(httpClient: HttpClient): Client =
             Client(httpClient)
             
-    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterFeature> {
+    class Client(override val httpClient: HttpClient): ApiClient<CharacterFeature> {
         override val parse = parseResponseBody
         
-        suspend fun getMyClass(index: String) = 
-            getResourceByUri("/api/features/${index}")
+        suspend fun getCharacterFeature(features: String) = 
+            getResourceByUri("/api/features/${features}")
     }
 
     }
