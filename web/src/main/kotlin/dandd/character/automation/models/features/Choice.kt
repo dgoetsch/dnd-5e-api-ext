@@ -30,7 +30,7 @@ data class Choice(
                         "choose".int(),
                         "type".str(),
                         "from".arr {
-                            obj {
+                            "from".obj {
                                 UrlName.from(node).bind()
                             }
                         }

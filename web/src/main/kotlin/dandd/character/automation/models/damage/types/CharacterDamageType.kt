@@ -33,7 +33,7 @@ data class CharacterDamageType(
                         "index".str(),
                         "name".str(),
                         "desc".arr {
-                            str()
+                            "desc".str()
                         },
                         "url".str()
                     )

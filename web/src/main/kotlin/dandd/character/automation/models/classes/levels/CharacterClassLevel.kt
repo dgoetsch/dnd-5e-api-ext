@@ -21,7 +21,7 @@ data class CharacterClassLevel(
     val index: Int,
     val `class`: NameUrl,
     val url: String,
-    val spellcasting: ClassSpecific?
+    val spellcasting: Spellcasting?
 ) {
     companion object {
         val parseResponseBody = { jsonString: String -> Either
@@ -40,12 +40,12 @@ data class CharacterClassLevel(
                         "ability_score_bonuses".int(),
                         "prof_bonus".int(),
                         "feature_choices".arr {
-                            obj {
+                            "feature_choices".obj {
                                 NameUrl.from(node).bind()
                             }
                         },
                         "features".arr {
-                            obj {
+                            "features".obj {
                                 NameUrl.from(node).bind()
                             }
                         },
@@ -58,8 +58,8 @@ data class CharacterClassLevel(
                         },
                         "url".str(),
                         "spellcasting".nullable {
-                            obj {
-                                ClassSpecific.from(node).bind()
+                            "spellcasting".obj {
+                                Spellcasting.from(node).bind()
                             }
                         }
                     )

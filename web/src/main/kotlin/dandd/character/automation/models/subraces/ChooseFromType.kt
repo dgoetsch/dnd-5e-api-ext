@@ -29,7 +29,7 @@ data class ChooseFromType(
                     ChooseFromType(
                         "choose".int(),
                         "from".arr {
-                            obj {
+                            "from".obj {
                                 UrlName.from(node).bind()
                             }
                         },

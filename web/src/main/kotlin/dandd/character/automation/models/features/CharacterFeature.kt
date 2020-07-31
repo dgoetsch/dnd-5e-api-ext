@@ -40,37 +40,37 @@ data class CharacterFeature(
                             UrlName.from(node).bind()
                         },
                         "desc".arr {
-                            str()
+                            "desc".str()
                         },
                         "_id".str(),
                         "index".str(),
                         "name".str(),
                         "level".nullable {
-                            int()
+                            "level".int()
                         },
                         "url".str(),
                         "subclass".nullable {
-                            obj {
+                            "subclass".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "prerequisites".nullable {
-                            arr {
-                                obj {
+                            "prerequisites".arr {
+                                "prerequisites".obj {
                                     Prerequisites.from(node).bind()
                                 }
                             }
                         },
                         "group".nullable {
-                            str()
+                            "group".str()
                         },
                         "choice".nullable {
-                            obj {
+                            "choice".obj {
                                 Choice.from(node).bind()
                             }
                         },
                         "reference".nullable {
-                            str()
+                            "reference".str()
                         }
                     )
                 }

@@ -41,39 +41,39 @@ data class CharacterStartingEquipment(
                         "_id".str(),
                         "index".int(),
                         "starting_equipment".arr {
-                            obj {
+                            "starting_equipment".obj {
                                 StartingEquipment.from(node).bind()
                             }
                         },
                         "choices_to_make".int(),
                         "choice_1".arr {
-                            obj {
+                            "choice_1".obj {
                                 ChooseTypeFrom.from(node).bind()
                             }
                         },
                         "choice_2".arr {
-                            obj {
+                            "choice_2".obj {
                                 ChooseTypeFrom.from(node).bind()
                             }
                         },
                         "choice_3".nullable {
-                            arr {
-                                obj {
+                            "choice_3".arr {
+                                "choice_3".obj {
                                     ChooseTypeFrom.from(node).bind()
                                 }
                             }
                         },
                         "choice_4".nullable {
-                            arr {
-                                obj {
+                            "choice_4".arr {
+                                "choice_4".obj {
                                     ChooseTypeFrom.from(node).bind()
                                 }
                             }
                         },
                         "url".str(),
                         "choice_5".nullable {
-                            arr {
-                                obj {
+                            "choice_5".arr {
+                                "choice_5".obj {
                                     ChooseTypeFrom.from(node).bind()
                                 }
                             }

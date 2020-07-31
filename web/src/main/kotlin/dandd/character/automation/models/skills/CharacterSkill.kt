@@ -34,7 +34,7 @@ data class CharacterSkill(
                         "index".str(),
                         "name".str(),
                         "desc".arr {
-                            str()
+                            "desc".str()
                         },
                         "ability_score".obj {
                             AbilityScore.from(node).bind()

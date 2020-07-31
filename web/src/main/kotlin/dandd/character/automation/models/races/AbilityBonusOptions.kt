@@ -30,7 +30,7 @@ data class AbilityBonusOptions(
                         "choose".int(),
                         "type".str(),
                         "from".arr {
-                            obj {
+                            "from".obj {
                                 AbilityBonuses.from(node).bind()
                             }
                         }

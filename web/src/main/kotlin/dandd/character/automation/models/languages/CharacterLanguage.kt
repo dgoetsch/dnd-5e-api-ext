@@ -36,14 +36,14 @@ data class CharacterLanguage(
                         "index".str(),
                         "name".str(),
                         "desc".nullable {
-                            str()
+                            "desc".str()
                         },
                         "type".str(),
                         "typical_speakers".arr {
-                            str()
+                            "typical_speakers".str()
                         },
                         "script".nullable {
-                            str()
+                            "script".str()
                         },
                         "url".str()
                     )

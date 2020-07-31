@@ -41,7 +41,7 @@ data class CharacterSpellcasting(
                             UrlName.from(node).bind()
                         },
                         "info".arr {
-                            obj {
+                            "info".obj {
                                 Info.from(node).bind()
                             }
                         },

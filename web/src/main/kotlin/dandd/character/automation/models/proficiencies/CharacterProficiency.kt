@@ -36,12 +36,12 @@ data class CharacterProficiency(
                         "type".str(),
                         "name".str(),
                         "classes".arr {
-                            obj {
+                            "classes".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "races".arr {
-                            obj {
+                            "races".obj {
                                 UrlName.from(node).bind()
                             }
                         },

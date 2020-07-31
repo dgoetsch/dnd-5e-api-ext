@@ -33,7 +33,7 @@ data class CharacterEquipmentCategory(
                         "index".str(),
                         "name".str(),
                         "equipment".arr {
-                            obj {
+                            "equipment".obj {
                                 Equipment.from(node).bind()
                             }
                         },

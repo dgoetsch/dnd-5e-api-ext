@@ -29,10 +29,10 @@ data class Prerequisites(
                     Prerequisites(
                         "url".str(),
                         "type".nullable {
-                            str()
+                            "type".str()
                         },
                         "name".nullable {
-                            str()
+                            "name".str()
                         }
                     )
                 }

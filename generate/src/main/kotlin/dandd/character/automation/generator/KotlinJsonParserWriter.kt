@@ -86,7 +86,7 @@ data class KotlinJsonParserWriter(
     private fun writeParse(schema: ListSchema, fieldName: String? = null): String {
         return closureCall("arr", fieldName) {
             schema.schema?.let {
-                child().generateParser(it)
+                child().generateParser(it, fieldName)
             }?:""
         }
     }
@@ -107,7 +107,7 @@ data class KotlinJsonParserWriter(
 
     private fun writeParse(schema: OptionalSchema, fieldName: String? = null): String {
         return closureCall("nullable", fieldName) {
-            child().generateParser(schema.schema)
+            child().generateParser(schema.schema, fieldName)
         }
     }
 

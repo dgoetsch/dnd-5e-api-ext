@@ -33,7 +33,7 @@ data class CharacterWeaponPropert(
                         "index".str(),
                         "name".str(),
                         "desc".arr {
-                            str()
+                            "desc".str()
                         },
                         "url".str()
                     )

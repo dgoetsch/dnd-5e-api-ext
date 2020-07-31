@@ -59,97 +59,97 @@ data class CharacterEquipment(
                             NameUrl.from(node).bind()
                         },
                         "gear_category".nullable {
-                            str()
+                            "gear_category".str()
                         },
                         "cost".obj {
                             Cost.from(node).bind()
                         },
                         "weight".nullable {
-                            double()
+                            "weight".double()
                         },
                         "url".str(),
                         "weapon_category".nullable {
-                            str()
+                            "weapon_category".str()
                         },
                         "weapon_range".nullable {
-                            str()
+                            "weapon_range".str()
                         },
                         "category_range".nullable {
-                            str()
+                            "category_range".str()
                         },
                         "damage".nullable {
-                            obj {
+                            "damage".obj {
                                 DamageDiceDamageBonusDamageType.from(node).bind()
                             }
                         },
                         "range".nullable {
-                            obj {
+                            "range".obj {
                                 Range.from(node).bind()
                             }
                         },
                         "properties".nullable {
-                            arr {
-                                obj {
+                            "properties".arr {
+                                "properties".obj {
                                     NameUrl.from(node).bind()
                                 }
                             }
                         },
                         "tool_category".nullable {
-                            str()
+                            "tool_category".str()
                         },
                         "desc".nullable {
-                            arr {
-                                str()
+                            "desc".arr {
+                                "desc".str()
                             }
                         },
                         "vehicle_category".nullable {
-                            str()
+                            "vehicle_category".str()
                         },
                         "speed".nullable {
-                            obj {
+                            "speed".obj {
                                 Cost.from(node).bind()
                             }
                         },
                         "2h_damage".nullable {
-                            obj {
+                            "2h_damage".obj {
                                 DamageDiceDamageBonusDamageType.from(node).bind()
                             }
                         },
                         "contents".nullable {
-                            arr {
-                                obj {
+                            "contents".arr {
+                                "contents".obj {
                                     Contents.from(node).bind()
                                 }
                             }
                         },
                         "capacity".nullable {
-                            str()
+                            "capacity".str()
                         },
                         "armor_category".nullable {
-                            str()
+                            "armor_category".str()
                         },
                         "armor_class".nullable {
-                            obj {
+                            "armor_class".obj {
                                 ArmorClass.from(node).bind()
                             }
                         },
                         "str_minimum".nullable {
-                            int()
+                            "str_minimum".int()
                         },
                         "stealth_disadvantage".nullable {
-                            boolean()
+                            "stealth_disadvantage".boolean()
                         },
                         "quantity".nullable {
-                            int()
+                            "quantity".int()
                         },
                         "throw_range".nullable {
-                            obj {
+                            "throw_range".obj {
                                 ThrowRange.from(node).bind()
                             }
                         },
                         "special".nullable {
-                            arr {
-                                str()
+                            "special".arr {
+                                "special".str()
                             }
                         }
                     )

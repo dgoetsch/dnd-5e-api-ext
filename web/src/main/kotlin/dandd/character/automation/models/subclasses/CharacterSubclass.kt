@@ -41,16 +41,16 @@ data class CharacterSubclass(
                         "name".str(),
                         "subclass_flavor".str(),
                         "desc".arr {
-                            str()
+                            "desc".str()
                         },
                         "features".arr {
-                            obj {
+                            "features".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "spells".nullable {
-                            arr {
-                                obj {
+                            "spells".arr {
+                                "spells".obj {
                                     Spells.from(node).bind()
                                 }
                             }

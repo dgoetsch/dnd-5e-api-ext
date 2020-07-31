@@ -34,18 +34,18 @@ data class CharacterTrait(
                         "_id".str(),
                         "index".str(),
                         "races".arr {
-                            obj {
+                            "races".obj {
                                 NameUrl.from(node).bind()
                             }
                         },
                         "subraces".arr {
-                            obj {
+                            "subraces".obj {
                                 NameUrl.from(node).bind()
                             }
                         },
                         "name".str(),
                         "desc".arr {
-                            str()
+                            "desc".str()
                         },
                         "url".str()
                     )

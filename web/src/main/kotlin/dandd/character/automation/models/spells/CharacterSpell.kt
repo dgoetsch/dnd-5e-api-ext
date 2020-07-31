@@ -45,14 +45,14 @@ data class CharacterSpell(
                         "index".str(),
                         "name".str(),
                         "desc".arr {
-                            str()
+                            "desc".str()
                         },
                         "range".str(),
                         "components".arr {
-                            str()
+                            "components".str()
                         },
                         "material".nullable {
-                            str()
+                            "material".str()
                         },
                         "ritual".boolean(),
                         "duration".str(),
@@ -63,19 +63,19 @@ data class CharacterSpell(
                             NameUrl.from(node).bind()
                         },
                         "classes".arr {
-                            obj {
+                            "classes".obj {
                                 NameUrl.from(node).bind()
                             }
                         },
                         "subclasses".arr {
-                            obj {
+                            "subclasses".obj {
                                 NameUrl.from(node).bind()
                             }
                         },
                         "url".str(),
                         "higher_level".nullable {
-                            arr {
-                                str()
+                            "higher_level".arr {
+                                "higher_level".str()
                             }
                         }
                     )

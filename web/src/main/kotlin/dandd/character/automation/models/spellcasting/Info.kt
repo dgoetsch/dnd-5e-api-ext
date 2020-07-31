@@ -28,7 +28,7 @@ data class Info(
                     Info(
                         "name".str(),
                         "desc".arr {
-                            str()
+                            "desc".str()
                         }
                     )
                 }

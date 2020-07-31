@@ -44,32 +44,32 @@ data class CharacterSubrace(
                         },
                         "desc".str(),
                         "ability_bonuses".arr {
-                            obj {
+                            "ability_bonuses".obj {
                                 AbilityBonuses.from(node).bind()
                             }
                         },
                         "starting_proficiencies".arr {
-                            obj {
+                            "starting_proficiencies".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "languages".arr {
-                            obj {
+                            "languages".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "language_options".nullable {
-                            obj {
+                            "language_options".obj {
                                 ChooseFromType.from(node).bind()
                             }
                         },
                         "racial_traits".arr {
-                            obj {
+                            "racial_traits".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "racial_trait_options".nullable {
-                            obj {
+                            "racial_trait_options".obj {
                                 ChooseFromType.from(node).bind()
                             }
                         },

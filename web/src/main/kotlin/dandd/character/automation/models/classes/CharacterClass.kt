@@ -41,17 +41,17 @@ data class CharacterClass(
                         "name".str(),
                         "hit_die".int(),
                         "proficiency_choices".arr {
-                            obj {
+                            "proficiency_choices".obj {
                                 ProficiencyChoices.from(node).bind()
                             }
                         },
                         "proficiencies".arr {
-                            obj {
+                            "proficiencies".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "saving_throws".arr {
-                            obj {
+                            "saving_throws".obj {
                                 UrlName.from(node).bind()
                             }
                         },
@@ -62,13 +62,13 @@ data class CharacterClass(
                             UrlClass.from(node).bind()
                         },
                         "subclasses".arr {
-                            obj {
+                            "subclasses".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "url".str(),
                         "spellcasting".nullable {
-                            obj {
+                            "spellcasting".obj {
                                 UrlClass.from(node).bind()
                             }
                         }

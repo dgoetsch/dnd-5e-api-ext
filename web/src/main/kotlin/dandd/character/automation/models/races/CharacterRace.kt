@@ -48,7 +48,7 @@ data class CharacterRace(
                         "name".str(),
                         "speed".int(),
                         "ability_bonuses".arr {
-                            obj {
+                            "ability_bonuses".obj {
                                 AbilityBonuses.from(node).bind()
                             }
                         },
@@ -57,44 +57,44 @@ data class CharacterRace(
                         "size".str(),
                         "size_description".str(),
                         "starting_proficiencies".arr {
-                            obj {
+                            "starting_proficiencies".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "languages".arr {
-                            obj {
+                            "languages".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "language_desc".str(),
                         "traits".arr {
-                            obj {
+                            "traits".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "subraces".arr {
-                            obj {
+                            "subraces".obj {
                                 UrlName.from(node).bind()
                             }
                         },
                         "url".str(),
                         "starting_proficiency_options".nullable {
-                            obj {
+                            "starting_proficiency_options".obj {
                                 ChooseTypeFrom.from(node).bind()
                             }
                         },
                         "trait_options".nullable {
-                            obj {
+                            "trait_options".obj {
                                 ChooseTypeFrom.from(node).bind()
                             }
                         },
                         "ability_bonus_options".nullable {
-                            obj {
+                            "ability_bonus_options".obj {
                                 AbilityBonusOptions.from(node).bind()
                             }
                         },
                         "language_options".nullable {
-                            obj {
+                            "language_options".obj {
                                 ChooseTypeFrom.from(node).bind()
                             }
                         }

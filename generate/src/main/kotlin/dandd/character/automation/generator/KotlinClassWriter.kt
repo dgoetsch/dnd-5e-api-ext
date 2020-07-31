@@ -119,9 +119,10 @@ ${writeParserFields().joinToString(",\n")}
 
 fun Map<String, ObjectSchema>.findType(schema: ObjectSchema, name: String?): Map.Entry<String, ObjectSchema>? {
     return entries.find { schema == it.value }
-            ?: entries.find { schema.isInstanceOf(it.value) }
             ?: name?.let { entries.find {
                 keyToClassName(name) == it.key
             } }
+            ?: entries.find { schema.isInstanceOf(it.value) }
+
 }
 

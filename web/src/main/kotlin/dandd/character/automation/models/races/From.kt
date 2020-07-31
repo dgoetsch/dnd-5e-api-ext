@@ -30,7 +30,7 @@ data class From(
                         "url".str(),
                         "name".str(),
                         "bonus".nullable {
-                            int()
+                            "bonus".int()
                         }
                     )
                 }
