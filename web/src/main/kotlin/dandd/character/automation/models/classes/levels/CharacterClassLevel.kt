@@ -2,7 +2,7 @@
 package dandd.character.automation.models.classes.levels
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -17,11 +17,11 @@ data class CharacterClassLevel(
     val prof_bonus: Int,
     val feature_choices: List<NameUrl>,
     val features: List<NameUrl>,
-    val spellcasting: ClassSpecific?,
     val class_specific: Map<String, Any>,
     val index: Int,
     val `class`: NameUrl,
-    val url: String
+    val url: String,
+    val spellcasting: ClassSpecific?
 ) {
     companion object {
         val parseResponseBody = { jsonString: String -> Either
@@ -49,27 +49,38 @@ data class CharacterClassLevel(
                                 NameUrl.from(node).bind()
                             }
                         },
-                        "spellcasting".nullable {
-                            obj {
-                                ClassSpecific.from(node).bind()
-                            }
-                        },
                         "class_specific".obj {
-                            "rage_count".int()
-                            "rage_damage_bonus".int()
-                            "brutal_critical_dice".int()
+                            "sorcery_points".int()
+                            "metamagic_known".int()
+                            "creating_spell_slots".arr {
+                                obj {
+                                    CreatingSpellSlots.from(node).bind()
+                                }
+                            }
                         },
                         "index".int(),
                         "class".obj {
                             NameUrl.from(node).bind()
                         },
-                        "url".str()
+                        "url".str(),
+                        "spellcasting".nullable {
+                            obj {
+                                ClassSpecific.from(node).bind()
+                            }
+                        }
                     )
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterClassLevel> =
-            ApiCient(httpClient, "classes-levels", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterClassLevel> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterClassLevel> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(classes: String, levels: String) = 
+            getResourceByUri("/api/classes/${classes}/levels/${levels}")
+    }
 
     }
 }

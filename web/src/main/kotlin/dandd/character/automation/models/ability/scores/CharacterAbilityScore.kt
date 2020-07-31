@@ -2,7 +2,7 @@
 package dandd.character.automation.models.ability.scores
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -48,8 +48,15 @@ data class CharacterAbilityScore(
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterAbilityScore> =
-            ApiCient(httpClient, "ability-scores", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterAbilityScore> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterAbilityScore> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(index: String) = 
+            getResourceByUri("/api/ability-scores/${index}")
+    }
 
     }
 }

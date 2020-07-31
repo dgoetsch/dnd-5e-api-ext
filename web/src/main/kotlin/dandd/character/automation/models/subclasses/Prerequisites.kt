@@ -2,7 +2,7 @@
 package dandd.character.automation.models.subclasses
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight

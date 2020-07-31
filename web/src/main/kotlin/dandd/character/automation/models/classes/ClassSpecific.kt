@@ -1,5 +1,5 @@
 
-package dandd.character.automation.models.classes.levels
+package dandd.character.automation.models.classes
 
 import io.ktor.client.HttpClient
 import web.api.ApiClient

@@ -2,7 +2,7 @@
 package dandd.character.automation.models.subclasses
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -60,8 +60,15 @@ data class CharacterSubclass(
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterSubclass> =
-            ApiCient(httpClient, "subclasses", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterSubclass> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterSubclass> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(index: String) = 
+            getResourceByUri("/api/subclasses/${index}")
+    }
 
     }
 }

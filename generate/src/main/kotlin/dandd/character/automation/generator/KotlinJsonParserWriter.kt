@@ -1,7 +1,54 @@
 package dandd.character.automation.generator
 
+import arrow.core.extensions.list.foldable.foldLeft
 import java.lang.RuntimeException
 
+data class ClientWriterConfig(val fieldNames: List<String>,
+                              val urlPattern: String) {
+    fun materialize(resourceClassName: String) =
+        ClientMethodWriter(resourceClassName, fieldNames, urlPattern)
+}
+
+fun clientWriterConfig(resourceType: String): ClientWriterConfig {
+    return ClientWriterConfig(listOf("index"), "/api/$resourceType/{}")
+}
+
+fun clientWriterConfig(resourceTypes: List<String>): ClientWriterConfig {
+    return ClientWriterConfig(resourceTypes, "/api/${resourceTypes.map{ "$it/{}" }.joinToString("/")}")
+}
+
+data class ClientMethodWriter(
+        private val resourceClassName: String,
+        private val fieldNames: List<String>,
+        private val urlPattern: String) {
+
+    private val sanitizedFields = fieldNames.map { it
+            .split("[^a-zA-Z]+".toRegex())
+            .map { it.capitalize() }
+            .joinToString("")
+            .decapitalize()
+    }
+    private val methodParams: String = sanitizedFields
+            .map { "$it: String" }
+            .joinToString(", ")
+
+    private val url = sanitizedFields
+            .foldLeft(urlPattern) { prev, next ->
+                prev.replaceFirst("{}", "\${$next}")
+            }
+
+    val clientCLass = """
+    fun client(httpClient: HttpClient): ApiClient<$resourceClassName> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<$resourceClassName> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass($methodParams) = 
+            getResourceByUri("$url")
+    }
+"""
+}
 data class KotlinJsonParserWriter(
         val dictionary: Map<String, ObjectSchema>,
         val indentLevel: Int,

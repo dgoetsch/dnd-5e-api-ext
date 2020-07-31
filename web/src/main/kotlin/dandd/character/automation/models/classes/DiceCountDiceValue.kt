@@ -1,5 +1,5 @@
 
-package dandd.character.automation.models.equipment
+package dandd.character.automation.models.classes
 
 import io.ktor.client.HttpClient
 import web.api.ApiClient
@@ -10,9 +10,9 @@ import web.core.mapLeft
 import web.parse.*
 import kotlin.js.Json
 
-data class Speed(
-    val quantity: Double,
-    val unit: String
+data class DiceCountDiceValue(
+    val dice_count: Int,
+    val dice_value: Int
 ) {
     companion object {
         val parseResponseBody = { jsonString: String -> Either
@@ -22,12 +22,12 @@ data class Speed(
             .mapLeft { ClientParseError(jsonString, it) }
         }
         
-        fun from(json: Json?): Either<ParseError, Speed> =
+        fun from(json: Json?): Either<ParseError, DiceCountDiceValue> =
             json.parse {
                 obj {
-                    Speed(
-                        "quantity".double(),
-                        "unit".str()
+                    DiceCountDiceValue(
+                        "dice_count".int(),
+                        "dice_value".int()
                     )
                 }
             }

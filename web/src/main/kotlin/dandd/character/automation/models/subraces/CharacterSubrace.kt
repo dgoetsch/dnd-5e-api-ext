@@ -2,7 +2,7 @@
 package dandd.character.automation.models.subraces
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -78,8 +78,15 @@ data class CharacterSubrace(
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterSubrace> =
-            ApiCient(httpClient, "subraces", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterSubrace> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterSubrace> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(index: String) = 
+            getResourceByUri("/api/subraces/${index}")
+    }
 
     }
 }

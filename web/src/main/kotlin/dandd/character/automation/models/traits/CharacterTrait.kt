@@ -2,7 +2,7 @@
 package dandd.character.automation.models.traits
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -52,8 +52,15 @@ data class CharacterTrait(
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterTrait> =
-            ApiCient(httpClient, "traits", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterTrait> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterTrait> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(index: String) = 
+            getResourceByUri("/api/traits/${index}")
+    }
 
     }
 }

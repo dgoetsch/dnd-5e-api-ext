@@ -3,22 +3,19 @@ package web.api
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.close
 import io.ktor.client.statement.readText
-import io.ktor.client.statement.use
 import io.ktor.http.HttpStatusCode
 import web.core.*
 import web.parse.ParseError
 
-class ApiCient<T>(val client: HttpClient,
-                  val type: String,
-                  val parse: (String) -> Either<ApiClientError, T>) {
-    suspend fun getResource(name: String): Either<ApiClientError, T> = getResourceByUri("/api/$type/$name")
+interface ApiClient<T>{
+    val httpClient: HttpClient
+    val parse: (String) -> Either<ApiClientError, T>
 
     suspend fun getResourceByUri(uri: String): Either<ApiClientError, T> = Either
             .suspendCatching {
                 val prefixedUri = if(uri.startsWith("/")) uri else "/$uri"
-                client.get<HttpResponse>("http://localhost:8099$prefixedUri") {}
+                httpClient.get<HttpResponse>("http://localhost:8099$prefixedUri") {}
             }
             .mapLeft { RequestFailed(uri, it) }
             .suspendBindRight { response -> Either

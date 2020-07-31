@@ -2,7 +2,7 @@
 package dandd.character.automation.models.magic.schools
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -38,8 +38,15 @@ data class CharacterMagicSchool(
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterMagicSchool> =
-            ApiCient(httpClient, "magic-schools", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterMagicSchool> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterMagicSchool> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(index: String) = 
+            getResourceByUri("/api/magic-schools/${index}")
+    }
 
     }
 }

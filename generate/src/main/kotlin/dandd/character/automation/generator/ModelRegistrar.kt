@@ -58,7 +58,7 @@ val resourceConfigs: List<ResourceConfig<*, *>>) {
 
         return explicitSchemas + inferredSchemas
     }
-
-    private fun Map<String, Any>.computNameFromKeys(): String = keys.flatMap { it.split("_") }.map { it.capitalize() }.joinToString("")
-
 }
+
+fun keyToClassName(key: String) = key.split("_").map { it.capitalize() }.joinToString("")
+private fun Map<String, Any>.computNameFromKeys(): String = keys.flatMap { it.split("_") }.map { it.capitalize() }.joinToString("")

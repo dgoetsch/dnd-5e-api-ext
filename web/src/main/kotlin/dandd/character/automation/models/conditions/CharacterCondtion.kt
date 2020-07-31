@@ -2,7 +2,7 @@
 package dandd.character.automation.models.conditions
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -40,8 +40,15 @@ data class CharacterCondtion(
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterCondtion> =
-            ApiCient(httpClient, "conditions", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterCondtion> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterCondtion> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(index: String) = 
+            getResourceByUri("/api/conditions/${index}")
+    }
 
     }
 }

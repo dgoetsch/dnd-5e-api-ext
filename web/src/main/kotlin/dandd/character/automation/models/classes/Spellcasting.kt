@@ -1,5 +1,5 @@
 
-package dandd.character.automation.models.classes.levels
+package dandd.character.automation.models.classes
 
 import io.ktor.client.HttpClient
 import web.api.ApiClient
@@ -12,16 +12,18 @@ import kotlin.js.Json
 
 data class Spellcasting(
     val spells_known: Int?,
-    val spell_slots_level_1: Int,
-    val spell_slots_level_2: Int,
-    val spell_slots_level_3: Int,
-    val spell_slots_level_4: Int,
-    val spell_slots_level_5: Int,
+    val spell_slots_level_1: Int?,
+    val spell_slots_level_2: Int?,
+    val spell_slots_level_3: Int?,
+    val spell_slots_level_4: Int?,
+    val spell_slots_level_5: Int?,
     val cantrips_known: Int?,
     val spell_slots_level_6: Int?,
     val spell_slots_level_7: Int?,
     val spell_slots_level_8: Int?,
-    val spell_slots_level_9: Int?
+    val spell_slots_level_9: Int?,
+    val url: String?,
+    val `class`: String?
 ) {
     companion object {
         val parseResponseBody = { jsonString: String -> Either
@@ -38,11 +40,21 @@ data class Spellcasting(
                         "spells_known".nullable {
                             int()
                         },
-                        "spell_slots_level_1".int(),
-                        "spell_slots_level_2".int(),
-                        "spell_slots_level_3".int(),
-                        "spell_slots_level_4".int(),
-                        "spell_slots_level_5".int(),
+                        "spell_slots_level_1".nullable {
+                            int()
+                        },
+                        "spell_slots_level_2".nullable {
+                            int()
+                        },
+                        "spell_slots_level_3".nullable {
+                            int()
+                        },
+                        "spell_slots_level_4".nullable {
+                            int()
+                        },
+                        "spell_slots_level_5".nullable {
+                            int()
+                        },
                         "cantrips_known".nullable {
                             int()
                         },
@@ -57,6 +69,12 @@ data class Spellcasting(
                         },
                         "spell_slots_level_9".nullable {
                             int()
+                        },
+                        "url".nullable {
+                            str()
+                        },
+                        "class".nullable {
+                            str()
                         }
                     )
                 }

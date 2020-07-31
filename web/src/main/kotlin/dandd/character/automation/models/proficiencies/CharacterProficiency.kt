@@ -2,7 +2,7 @@
 package dandd.character.automation.models.proficiencies
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -50,8 +50,15 @@ data class CharacterProficiency(
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterProficiency> =
-            ApiCient(httpClient, "proficiencies", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterProficiency> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterProficiency> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(index: String) = 
+            getResourceByUri("/api/proficiencies/${index}")
+    }
 
     }
 }

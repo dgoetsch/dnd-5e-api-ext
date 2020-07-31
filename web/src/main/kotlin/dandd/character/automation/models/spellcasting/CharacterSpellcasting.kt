@@ -2,7 +2,7 @@
 package dandd.character.automation.models.spellcasting
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -50,8 +50,15 @@ data class CharacterSpellcasting(
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterSpellcasting> =
-            ApiCient(httpClient, "spellcasting", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterSpellcasting> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterSpellcasting> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(index: String) = 
+            getResourceByUri("/api/spellcasting/${index}")
+    }
 
     }
 }

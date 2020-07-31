@@ -2,7 +2,7 @@
 package dandd.character.automation.models.weapon.properties
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -40,8 +40,15 @@ data class CharacterWeaponPropert(
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterWeaponPropert> =
-            ApiCient(httpClient, "weapon-properties", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterWeaponPropert> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterWeaponPropert> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(index: String) = 
+            getResourceByUri("/api/weapon-properties/${index}")
+    }
 
     }
 }

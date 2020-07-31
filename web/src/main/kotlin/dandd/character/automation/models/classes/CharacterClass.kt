@@ -2,7 +2,7 @@
 package dandd.character.automation.models.classes
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -76,8 +76,15 @@ data class CharacterClass(
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterClass> =
-            ApiCient(httpClient, "classes", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterClass> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterClass> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(index: String) = 
+            getResourceByUri("/api/classes/${index}")
+    }
 
     }
 }

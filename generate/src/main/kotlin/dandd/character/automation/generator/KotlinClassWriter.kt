@@ -2,7 +2,12 @@ package dandd.character.automation.generator
 
 import java.io.File
 
-class KotlinClassWriter(val resourceName: String, val mainClassName: String, val pkg: String, val dictionary: Map<String, ObjectSchema>) {
+
+class KotlinClassWriter(val resourceName: String,
+                        val mainClassName: String,
+                        val pkg: String,
+                        val dictionary: Map<String, ObjectSchema>,
+                        val clientWriterConfig: ClientWriterConfig) {
     private val transformTypes = mapOf(ConcreteSchema(java.lang.Integer::class.java) to "Int")
 
     fun writeAll(directory: String) {
@@ -28,7 +33,7 @@ class KotlinClassWriter(val resourceName: String, val mainClassName: String, val
                     else -> null
                 } } + listOf(
                         "import io.ktor.client.HttpClient",
-                        "import web.api.ApiCient",
+                        "import web.api.ApiClient",
                         "import web.api.ClientParseError",
                         "import web.core.Either",
                         "import web.core.bindRight",
@@ -45,7 +50,7 @@ package $pkg
 ${imports.joinToString("\n")}
 
 $classDeclaration
-$indent${fields.map { (name, schema) -> "val ${escapeFieldName(name)}: ${schema.writeType()}" }.joinToString(",\n$indent")}
+$indent${fields.map { (name, schema) -> "val ${escapeFieldName(name)}: ${schema.writeType(name)}" }.joinToString(",\n$indent")}
 ) {
     companion object {
         val parseResponseBody = { jsonString: String -> Either
@@ -71,10 +76,7 @@ ${writeParserFields().joinToString(",\n")}
 
     fun clientMethod(name: String): String {
         if (name == mainClassName) {
-            return """
-        fun client(httpClient: HttpClient): ApiCient<$name> =
-            ApiCient(httpClient, "$resourceName", parseResponseBody)
-"""
+            return clientWriterConfig.materialize(mainClassName).clientCLass
         } else {
             return  ""
         }
@@ -86,12 +88,15 @@ ${writeParserFields().joinToString(",\n")}
         }
     }
 
-    private fun Schema.writeType(): String =
-            when(this) {
+    private fun Schema.writeType(name: String? = null): String =
+            when(name) {
+                null -> null
+                else -> dictionary.getSchemaByName(name)?.key
+            } ?: when(this) {
                 is ConcreteSchema -> transformTypes[this]?:this.name()
-                is ListSchema -> "List<${this.schema?.writeType()?:"Any"}>"
+                is ListSchema -> "List<${this.schema?.writeType(name)?:"Any"}>"
                 is ObjectSchema -> dictionary.findType(this)?.key ?: "Map<String, Any>"
-                is OptionalSchema -> "${this.schema.writeType()}?"
+                is OptionalSchema -> "${this.schema.writeType(name)}?"
             }
 
     private val replacementTypeName = mapOf(
@@ -116,6 +121,10 @@ ${writeParserFields().joinToString(",\n")}
 
 }
 
+fun Map<String, ObjectSchema>.getSchemaByName(fieldName: String): Map.Entry<String, ObjectSchema>? {
+    val className = keyToClassName(fieldName)
+    get(keyToClassName(fieldName)).let { className to it }
+}
 fun Map<String, ObjectSchema>.findType(schema: ObjectSchema): Map.Entry<String, ObjectSchema>? {
     return entries.find { schema == it.value }
             ?: entries.find { schema.isInstanceOf(it.value) }

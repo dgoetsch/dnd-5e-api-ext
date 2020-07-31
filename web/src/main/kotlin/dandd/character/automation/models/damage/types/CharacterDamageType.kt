@@ -2,7 +2,7 @@
 package dandd.character.automation.models.damage.types
 
 import io.ktor.client.HttpClient
-import web.api.ApiCient
+import web.api.ApiClient
 import web.api.ClientParseError
 import web.core.Either
 import web.core.bindRight
@@ -40,8 +40,15 @@ data class CharacterDamageType(
                 }
             }
         
-        fun client(httpClient: HttpClient): ApiCient<CharacterDamageType> =
-            ApiCient(httpClient, "damage-types", parseResponseBody)
+    fun client(httpClient: HttpClient): ApiClient<CharacterDamageType> =
+            Client(httpClient)
+            
+    protected class Client(override val httpClient: HttpClient): ApiClient<CharacterDamageType> {
+        override val parse = parseResponseBody
+        
+        suspend fun getMyClass(index: String) = 
+            getResourceByUri("/api/damage-types/${index}")
+    }
 
     }
 }
