@@ -51,7 +51,7 @@ fun main() {
                         } }
                         } }
                     .awaitAll()
-            KotlinClassWriter(resourceName, className, pkg, registry.exportDictionary(), clientWriterConfig(resourceName.split("-"))).writeAll(targetDirectory)
+            KotlinClassWriter(className, pkg, registry.exportDictionary(), clientWriterConfig(resourceName.split("-"))).writeAll(targetDirectory)
         } } + resources.map { (resourceName, className, loader) -> async {
             val pkg = "$pkg.${resourceName.toLowerCase().replace("[^a-z]+".toRegex(), ".")}"
             val registry = ModelRegistrar(pkg, resources)
@@ -64,7 +64,7 @@ fun main() {
                         } }
                         } }
                     .awaitAll()
-            KotlinClassWriter(resourceName, className, pkg, registry.exportDictionary(), clientWriterConfig(resourceName)).writeAll(targetDirectory)
+            KotlinClassWriter(className, pkg, registry.exportDictionary(), clientWriterConfig(resourceName)).writeAll(targetDirectory)
         } }
 
         results.awaitAll()

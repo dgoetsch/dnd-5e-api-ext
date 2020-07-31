@@ -3,8 +3,7 @@ package dandd.character.automation.generator
 import java.io.File
 
 
-class KotlinClassWriter(val resourceName: String,
-                        val mainClassName: String,
+class KotlinClassWriter(val mainClassName: String,
                         val pkg: String,
                         val dictionary: Map<String, ObjectSchema>,
                         val clientWriterConfig: ClientWriterConfig) {
@@ -89,13 +88,10 @@ ${writeParserFields().joinToString(",\n")}
     }
 
     private fun Schema.writeType(name: String? = null): String =
-            when(name) {
-                null -> null
-                else -> dictionary.getSchemaByName(name)?.key
-            } ?: when(this) {
+            when(this) {
                 is ConcreteSchema -> transformTypes[this]?:this.name()
                 is ListSchema -> "List<${this.schema?.writeType(name)?:"Any"}>"
-                is ObjectSchema -> dictionary.findType(this)?.key ?: "Map<String, Any>"
+                is ObjectSchema -> dictionary.findType(this, name)?.key ?: "Map<String, Any>"
                 is OptionalSchema -> "${this.schema.writeType(name)}?"
             }
 
@@ -121,12 +117,11 @@ ${writeParserFields().joinToString(",\n")}
 
 }
 
-fun Map<String, ObjectSchema>.getSchemaByName(fieldName: String): Map.Entry<String, ObjectSchema>? {
-    val className = keyToClassName(fieldName)
-    get(keyToClassName(fieldName)).let { className to it }
-}
-fun Map<String, ObjectSchema>.findType(schema: ObjectSchema): Map.Entry<String, ObjectSchema>? {
+fun Map<String, ObjectSchema>.findType(schema: ObjectSchema, name: String?): Map.Entry<String, ObjectSchema>? {
     return entries.find { schema == it.value }
             ?: entries.find { schema.isInstanceOf(it.value) }
+            ?: name?.let { entries.find {
+                keyToClassName(name) == it.key
+            } }
 }
 

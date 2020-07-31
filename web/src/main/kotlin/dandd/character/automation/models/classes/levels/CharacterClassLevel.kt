@@ -17,7 +17,7 @@ data class CharacterClassLevel(
     val prof_bonus: Int,
     val feature_choices: List<NameUrl>,
     val features: List<NameUrl>,
-    val class_specific: Map<String, Any>,
+    val class_specific: ClassSpecific,
     val index: Int,
     val `class`: NameUrl,
     val url: String,
@@ -50,13 +50,7 @@ data class CharacterClassLevel(
                             }
                         },
                         "class_specific".obj {
-                            "sorcery_points".int()
-                            "metamagic_known".int()
-                            "creating_spell_slots".arr {
-                                obj {
-                                    CreatingSpellSlots.from(node).bind()
-                                }
-                            }
+                            ClassSpecific.from(node).bind()
                         },
                         "index".int(),
                         "class".obj {

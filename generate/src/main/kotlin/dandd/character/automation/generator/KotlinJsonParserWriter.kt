@@ -92,7 +92,7 @@ data class KotlinJsonParserWriter(
     }
     private fun writeParse(schema: ObjectSchema, fieldName: String? = null): String =
         closureCall("obj", fieldName) {
-            dictionary.findType(schema)
+            dictionary.findType(schema, fieldName)
                     ?.let { (k, v) -> writeDictionaryParse(k, fieldName) }
                     ?: schema.fields
                             .map { (childFieldName, childSchema) ->
