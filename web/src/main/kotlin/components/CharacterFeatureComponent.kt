@@ -6,9 +6,7 @@ import dandd.character.automation.models.features.CharacterFeature
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import kotlinx.html.ButtonType
-import kotlinx.html.Tag
-import kotlinx.html.id
+import kotlinx.html.*
 import react.*
 import react.dom.*
 import web.core.liftRight
@@ -71,20 +69,14 @@ class CharacterFeatureComponent(props: CharacterFeatureProps): RComponent<Charac
             }
 
             state.choices?.let { choices ->
-                val elementId = "${props.feature._id}-choices"
-                collapsable(elementId) {
-                    div("card card-body") {
-                        choices.map {
-                            div("row") {
-                                div("col-2 col-sm-1") {
 
-                                }
-                                div("col-10 col-sm-11") {
-                                    characterFeature(props) {
-                                        feature = it
-                                    }
-                                }
-                            }
+                val elementId = "${props.feature._id}-choices"
+                collapsable(elementId, cardTitle = {
+                    span { +"Choose ${props.feature.choice?.choose} ${props.feature.choice?.type}" }
+                }) {
+                    choices.map {
+                        characterFeature(props) {
+                            feature = it
                         }
                     }
                 }
@@ -102,32 +94,36 @@ fun <E: Tag> RDOMBuilder<E>.label(name: String, value: String) {
 
 fun RBuilder.collapsable(
         elementId: String,
+        cardTitle: RDOMBuilder<BUTTON>.() -> Unit = { },
         body: RBuilder.() -> Unit
 ) {
     div {
         var isVisible = false
-        div {
-            button(classes = "btn btn-primary",
-                    type = ButtonType.button) {
-                attrs {
-                    id = "$elementId-button"
-                    onClickFunction = {
-                        isVisible = !isVisible
-                        val clazz = if (isVisible) "show" else "collapse"
-                        document.getElementById(elementId)
-                                ?.className = clazz
-                        document.getElementById("$elementId-button")
-                                ?.innerHTML =  if(isVisible) "-" else "+"
+        card(
+                cardHeader = {
+                    button(classes = "btn btn-primary",
+                            type = ButtonType.button) {
+                        attrs {
+                            id = "$elementId-button"
+                            onClickFunction = {
+                                isVisible = !isVisible
+                                val clazz = if (isVisible) "show" else "collapse"
+                                document.getElementById(elementId)
+                                        ?.className = clazz
+                                document.getElementById("$elementId-button")
+                                        ?.className =  if(isVisible) "btn btn-primary" else "btn btn-primary text-muted"
+                            }
+                        }
+                        cardTitle()
                     }
-                }
-                +"+"
-            }
-        }
-        div("collapse") {
-            attrs {
-                id = elementId
-            }
-            body()
+                },
+                cardBodyContent = {
+                    div("collapse") {
+                        attrs {
+                            id = elementId
+                        }
+                        body()
+                    }
+                })
         }
     }
-}

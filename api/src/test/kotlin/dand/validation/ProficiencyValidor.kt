@@ -25,7 +25,7 @@ import kotlin.test.fail
 
 class ProficiencyValidor {
 
-//    @Test
+    @Test
     fun validate_references_source() {
         val urlBase = "http://localhost:8099"
         val mapper = jacksonObjectMapper()
@@ -33,16 +33,10 @@ class ProficiencyValidor {
             val proficiencies = mapper
                     .readValue<List<Proficiency>>(File("/home/mu-bear/Documents/DandD/automation/proficiencies.json").readText())
             proficiencies.map { proficiency -> proficiency.references?.map {
-                val urlResourceType = when(proficiency.type) {
-                    "Saving Throws" -> "ability-scores"
-                    else -> it.type
-                }
-                assert(it.url.startsWith("/api/$urlResourceType/"))
-
+                assert(it.url.startsWith("/api/${it.type}/"))
                 val response = khttp.get("$urlBase${it.url}")
                 assertEquals(response.statusCode, 200, "Path ${it.url} was unsuccessful")
                 assertNotNull(response.jsonObject)
-                println(response.jsonObject)
             } }
         }
     }

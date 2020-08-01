@@ -162,30 +162,34 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCh
                         }
                     }
                 }
-
-                hydrated.proficiencies.map {
-                    characterProficiency(props) {
-                        characterProficiency = it
+                if(hydrated.proficiencies.isNotEmpty()) {
+                    collapsable(
+                            elementId = "${model._id}-proficiencies",
+                            cardTitle = {
+                                span { + "Proficiencies" }
+                            }) {
+                        hydrated.proficiencies.map {
+                            characterProficiency(props) {
+                                characterProficiency = it
+                            }
+                        }
                     }
                 }
 
-                model.proficiency_choices.map {
-                    div {
+                if(hydrated.proficiencyChoices.isNotEmpty()) {
+                    h3 { +"Proficiency Choices" }
+
+                    model.proficiency_choices.mapIndexed { index, proficiencyChoices ->
                         div {
-                            span { strong { +"Choose " } }
-                            span { +it.choose.toString() }
-                            span { +" From" }
-                        }
-
-                        it.from.map {
-                            hydrated.proficiencyChoices.get(it.url)?.let {
-                                div("row") {
-                                    div("col-2 col-sm-1") {
-
-                                    }
-                                    div("col-10 col-sm-11") {
-                                        characterProficiency(props) {
-                                            characterProficiency = it
+                            collapsable("${model._id}-proficiencyChoices-$index", cardTitle = {
+                                span { +" Choose ${proficiencyChoices.choose} ${proficiencyChoices.type}" }
+                            }) {
+                                proficiencyChoices.from.map {
+                                    hydrated.proficiencyChoices.get(it.url)?.let {
+                                        div("col-10 col-sm-11") {
+                                            characterProficiency(props) {
+                                                characterProficiency = it
+                                            }
                                         }
                                     }
                                 }
@@ -193,8 +197,9 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCh
                         }
                     }
                 }
-                hydrated.proficiencyChoices
+
             }
         }
     }
 }
+

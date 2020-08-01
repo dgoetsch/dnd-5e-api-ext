@@ -23,33 +23,14 @@ class CharacterProficiencyComponent(props: CharacterProficiencyProps): RComponen
     }
 
     override fun RBuilder.render() {
-        h4 {
-            span { strong { +"Proficiency: "  } }
-            span { +props.characterProficiency.name }
-        }
         div {
             div {
-                span { strong { +"Type "  } }
-                span { +props.characterProficiency.type }
+                span { strong { +props.characterProficiency.name } }
             }
-
             div {
-                span { strong { +"Url "  } }
-                span { +props.characterProficiency.url }
+                +props.characterProficiency.url
             }
         }
-        /**
-         * Armor
-        Artisan's Tools
-
-        Gaming Sets
-        Musical Instruments
-        Other
-        Saving Throws
-        Skills
-        Vehicles
-        Weapons
-         */
     }
 }
 

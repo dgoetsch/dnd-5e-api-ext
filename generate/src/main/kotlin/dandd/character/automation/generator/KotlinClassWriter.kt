@@ -52,6 +52,7 @@ $classDeclaration
 $indent${fields.map { (name, schema) -> "val ${escapeFieldName(name)}: ${schema.writeType(name)}" }.joinToString(",\n$indent")}
 ) {
     companion object {
+        val resourceTypeName = "${clientWriterConfig.fieldNames.joinToString("-")}"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

@@ -1370,7 +1370,7 @@
   "url": "/api/proficiencies/saving-throw-str",
   "references": [{
     "url": "/api/ability-scores/str",
-    "type": "ability-score",
+    "type": "ability-scores",
     "name": "STR"
   }]
 }, {
@@ -1394,7 +1394,7 @@
   "url": "/api/proficiencies/saving-throw-dex",
   "references": [{
     "url": "/api/ability-scores/dex",
-    "type": "ability-score",
+    "type": "ability-scores",
     "name": "DEX"
   }]
 }, {
@@ -1415,7 +1415,7 @@
   "url": "/api/proficiencies/saving-throw-con",
   "references": [{
     "url": "/api/ability-scores/con",
-    "type": "ability-score",
+    "type": "ability-scores",
     "name": "CON"
   }]
 }, {
@@ -1436,7 +1436,7 @@
   "url": "/api/proficiencies/saving-throw-int",
   "references": [{
     "url": "/api/ability-scores/int",
-    "type": "ability-score",
+    "type": "ability-scores",
     "name": "INT"
   }]
 }, {
@@ -1463,7 +1463,7 @@
   "url": "/api/proficiencies/saving-throw-wis",
   "references": [{
     "url": "/api/ability-scores/wis",
-    "type": "ability-score",
+    "type": "ability-scores",
     "name": "WIS"
   }]
 }, {
@@ -1490,7 +1490,7 @@
   "url": "/api/proficiencies/saving-throw-cha",
   "references": [{
     "url": "/api/ability-scores/cha",
-    "type": "ability-score",
+    "type": "ability-scores",
     "name": "CHA"
   }]
 }, {
