@@ -2,6 +2,7 @@ package dandd.character.automation
 
 import arrow.core.Either
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dandd.character.automation.source.HttpRequestFailed
 import dandd.character.automation.source.ResourceLoaderFactory
 import dandd.character.automation.source.Resources
 import io.ktor.application.call
@@ -61,7 +62,13 @@ fun main() {
                                 val resource = loader.loadResource(id)
                                 when(resource) {
                                     is Either.Right -> call.respondText(resource.b, ContentType.Application.Json)
-                                    is Either.Left -> call.respondText(resource.a.message?:"Error", ContentType.Text.Any, HttpStatusCode.InternalServerError)
+                                    is Either.Left -> {
+                                        val error = resource.a
+                                        when (error) {
+                                            is HttpRequestFailed -> call.respondText(error.content, ContentType.Text.Any, HttpStatusCode.fromValue(error.statusCode))
+                                            else ->    call.respondText(resource.a.message?:"Error", ContentType.Text.Any, HttpStatusCode.InternalServerError)
+                                        }
+                                    }
                                 }
                             } }
                         }?: call.respond(HttpStatusCode.NotFound)
@@ -77,7 +84,13 @@ fun main() {
                                                 val resource = loader.loadResource(id to subId)
                                                 when(resource) {
                                                     is Either.Right -> call.respondText(resource.b, ContentType.Application.Json)
-                                                    is Either.Left -> call.respondText(resource.a.message?:"Error", ContentType.Text.Any, HttpStatusCode.InternalServerError)
+                                                    is Either.Left -> {
+                                                        val error = resource.a
+                                                        when (error) {
+                                                            is HttpRequestFailed -> call.respondText(error.content, ContentType.Text.Any, HttpStatusCode.fromValue(error.statusCode))
+                                                            else ->    call.respondText(resource.a.message?:"Error", ContentType.Text.Any, HttpStatusCode.InternalServerError)
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }

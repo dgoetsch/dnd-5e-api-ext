@@ -2,7 +2,6 @@ import clients.Clients
 import components.playerCharacter
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.css.strong
 import kotlinx.html.ButtonType
 import player.StaticPlayerService
 import react.*
@@ -11,7 +10,7 @@ import kotlin.browser.document
 import kotlin.browser.window
 import kotlinext.js.require
 fun main() {
-    require("bootstrap")
+//    require("bootstrap")
     window.onload = {
         document.body!!.insertAdjacentHTML("afterbegin", "<div class='container' id='root'></div>")
         render(document.getElementById("root")) {
@@ -71,6 +70,10 @@ class App: RComponent<RProps, AppState>() {
             playerCharacter(state) {
                 playerCharacter = model
             }
+        }
+
+        div {
+            +"Fin"
         }
     }
 }

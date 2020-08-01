@@ -1,6 +1,7 @@
 package components
 
 import AppResources
+import appComponent
 import copyFrom
 import dandd.character.automation.models.classes.CharacterClass
 import dandd.character.automation.models.proficiencies.CharacterProficiency
@@ -10,6 +11,7 @@ import react.dom.*
 import web.core.bindRight
 import web.core.liftRight
 import web.core.mapRight
+import kotlin.reflect.KClass
 
 
 external interface CharacterClassProps: RProps, AppResources {
@@ -17,37 +19,18 @@ external interface CharacterClassProps: RProps, AppResources {
 }
 
 external interface CharacterClassState: RState {
-    var proficiencies: List<CharacterProficiency>?
 }
 
-fun RBuilder.characterClass(parent: AppResources, handler: CharacterClassProps.() -> Unit): ReactElement {
-    return child(CharacterClassComponent::class) {
-        attrs {
-            copyFrom(parent)
-            handler()
-        }
-    }
-}
+fun RBuilder.characterClass(parent: AppResources, handler: CharacterClassProps.() -> Unit): ReactElement =
+    appComponent(CharacterClassComponent::class, parent, handler)
+
 
 class CharacterClassComponent(props: CharacterClassProps): RComponent<CharacterClassProps, CharacterClassState>(props) {
-    override fun CharacterClassState.init(props: CharacterClassProps) {
-        props.coroutineScope.launch {
-            props.characterClass.proficiencies
-                    .map { props.clients.proficienies.getResourceByUri(it.url) }
-                    .liftRight()
-                    .mapRight {
-                        setState {
-                            proficiencies = it
-                        }
-                    }
-        }
-
-    }
 
     override fun RBuilder.render() {
         div("card") {
             div("card-body") {
-                h4("card-title") {
+                div("card-title") {
                     span { strong { +"Class: "  } }
                     span { +props.characterClass.name }
                 }
@@ -55,11 +38,6 @@ class CharacterClassComponent(props: CharacterClassProps): RComponent<CharacterC
                     div {
                         span { strong { +"Hit Die "  } }
                         span { +props.characterClass.hit_die.toString() }
-                    }
-                    state.proficiencies?.map {
-                        characterProficiency(props) {
-                            characterProficiency = it
-                        }
                     }
                 }
             }

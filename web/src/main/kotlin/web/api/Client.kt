@@ -5,10 +5,24 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.readText
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.coroutineScope
 import web.core.*
 import web.parse.ParseError
 
 interface ApiClient<T>{
+
+    companion object {
+        suspend operator fun <R> invoke(rightBinding: suspend RightBinding<ApiClientError>.() -> R): Either<ApiClientError, R> =
+            Comprehension.suspend(rightBinding)
+
+        private object Comprehension: ComprehensionContext<ApiClientError> {
+            override fun BindError<ApiClientError>.unboxError(): ApiClientError =
+                    when(this) {
+                        is Expected -> error
+                        is Unexpected -> UnexpectedBindError(error)
+                    }
+        }
+    }
     val httpClient: HttpClient
     val parse: (String) -> Either<ApiClientError, T>
 
@@ -35,3 +49,4 @@ data class UnsuccessfulRequest(val statusCode: HttpStatusCode, val body: String)
 data class RequestFailed(val uri: String, val e: Exception): ApiClientError()
 data class RequestReadFailed(val uri: String, val e: Exception): ApiClientError()
 data class ClientParseError(val responseBody: String, val error: ParseError): ApiClientError()
+data class UnexpectedBindError(val error: Throwable): ApiClientError()

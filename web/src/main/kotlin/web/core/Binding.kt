@@ -15,6 +15,11 @@ interface RightBinding<L> {
 fun <L, R> ComprehensionContext<L>.comprehend(comprehension: RightBinding<L>.() -> R): Either<L, R> =
         RightBindingImpl<L>().apply(comprehension).mapLeft { it.unboxError() }
 
+
+suspend fun <L, R> ComprehensionContext<L>.suspend(comprehension: suspend RightBinding<L>.() -> R): Either<L, R> =
+        RightBindingImpl<L>().suspendApply(comprehension).mapLeft { it.unboxError() }
+
+
 class RightBindingImpl<L>: RightBinding<L> {
     var error: L? = null
     object BindException: Exception()
@@ -31,5 +36,9 @@ class RightBindingImpl<L>: RightBinding<L> {
 
     fun <R> apply(comprehension: RightBinding<L>.() -> R): Either<BindError<L>, R> =
             Either.catching { comprehension() }
+                    .mapLeft { error?.let { Expected(it) } ?: Unexpected(it) }
+
+    suspend fun <R> suspendApply(comprehension: suspend RightBinding<L>.() -> R): Either<BindError<L>, R> =
+            Either.suspendCatching { comprehension() }
                     .mapLeft { error?.let { Expected(it) } ?: Unexpected(it) }
 }

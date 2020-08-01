@@ -1,6 +1,7 @@
 package components
 
 import AppResources
+import appComponent
 import copyFrom
 import dandd.character.automation.models.proficiencies.CharacterProficiency
 import react.*
@@ -13,14 +14,8 @@ external interface CharacterProficiencyProps: RProps, AppResources {
 
 external interface CharacterProficiencyState: RState
 
-fun RBuilder.characterProficiency(parent: AppResources, handler: CharacterProficiencyProps.() -> Unit): ReactElement {
-    return child(CharacterProficiencyComponent::class) {
-        attrs {
-            copyFrom(parent)
-            handler()
-        }
-    }
-}
+fun RBuilder.characterProficiency(parent: AppResources, handler: CharacterProficiencyProps.() -> Unit): ReactElement =
+        appComponent(CharacterProficiencyComponent::class, parent, handler)
 
 class CharacterProficiencyComponent(props: CharacterProficiencyProps): RComponent<CharacterProficiencyProps, CharacterProficiencyState>(props) {
     override fun CharacterProficiencyState.init(props: CharacterProficiencyProps) {
@@ -37,11 +32,24 @@ class CharacterProficiencyComponent(props: CharacterProficiencyProps): RComponen
                 span { strong { +"Type "  } }
                 span { +props.characterProficiency.type }
             }
+
             div {
                 span { strong { +"Url "  } }
                 span { +props.characterProficiency.url }
             }
         }
+        /**
+         * Armor
+        Artisan's Tools
+
+        Gaming Sets
+        Musical Instruments
+        Other
+        Saving Throws
+        Skills
+        Vehicles
+        Weapons
+         */
     }
 }
 

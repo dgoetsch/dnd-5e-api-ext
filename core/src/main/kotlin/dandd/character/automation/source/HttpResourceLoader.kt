@@ -1,8 +1,10 @@
 package dandd.character.automation.source
 
 import arrow.core.Either
+import arrow.core.Left
 import arrow.core.Right
 import arrow.core.extensions.either.monad.flatten
+import arrow.core.flatMap
 import dandd.character.automation.Result
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -123,9 +125,15 @@ internal data class HttpResourceLoader<T, ID: Any>(
     }
 
     override suspend fun loadResource(id: ID): Result<T> = Either.catch {
-        val getResponse =  khttp.get(createSubUrl(id))
-        val content = String(getResponse.content)
-        readingMapper(content)
-    }.flatten()
+        khttp.get(createSubUrl(id))
+    }.flatMap { response ->
+        if(response.statusCode / 100 != 2) {
+            Left(HttpRequestFailed(response.statusCode, String(response.content)))
+        } else {
+            Right(String(response.content))
+        }
+    }.suspendFlatMap(readingMapper)
+
 }
 
+data class HttpRequestFailed(val statusCode: Int, val content: String): RuntimeException("http request failed: $statusCode: $content")

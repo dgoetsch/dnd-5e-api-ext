@@ -28,6 +28,7 @@ kotlin{
             keep("ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io")
         }
         testTask {
+            enabled = false
             useKarma {
                 useChromeHeadless()
             }
@@ -54,6 +55,8 @@ dependencies {
 
     implementation(npm("styled-components"))
     implementation(npm("inline-style-prefixer"))
+    implementation(npm("style-loader"))
+    implementation(npm("css-loader"))
 
     implementation(npm("text-encoding"))
     implementation(npm("bufferutil"))
@@ -61,9 +64,9 @@ dependencies {
     implementation(npm("abort-controller"))
     implementation(npm("fs"))
 
-    implementation(npm("jquery", "3.5.1"))
-    implementation(npm("popper.js", "1.16.0"))
-    implementation(npm("bootstrap", "4.5.0"))
+//    implementation(npm("jquery", "3.5.1"))
+//    implementation(npm("popper.js", "1.16.0"))
+//    implementation(npm("bootstrap", "4.5.0"))
 }
 
 

@@ -21,4 +21,6 @@ val arrow_version = "0.10.4"
 dependencies {
     implementation(project(":core"))
     implementation("io.ktor:ktor-server-netty:$ktor_version")
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
 }
