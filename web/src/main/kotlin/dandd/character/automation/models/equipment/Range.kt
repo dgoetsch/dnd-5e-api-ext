@@ -15,6 +15,7 @@ data class Range(
     val long: Int?
 ) {
     companion object {
+        val resourceTypeName = "equipment"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

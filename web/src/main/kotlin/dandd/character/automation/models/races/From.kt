@@ -16,6 +16,7 @@ data class From(
     val bonus: Int?
 ) {
     companion object {
+        val resourceTypeName = "races"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

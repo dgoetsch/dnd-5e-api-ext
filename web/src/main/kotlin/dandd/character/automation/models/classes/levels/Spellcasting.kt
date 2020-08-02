@@ -24,6 +24,7 @@ data class Spellcasting(
     val spell_slots_level_9: Int?
 ) {
     companion object {
+        val resourceTypeName = "classes-levels"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

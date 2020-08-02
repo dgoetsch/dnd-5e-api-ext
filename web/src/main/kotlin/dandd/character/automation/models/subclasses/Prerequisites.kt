@@ -16,6 +16,7 @@ data class Prerequisites(
     val name: String?
 ) {
     companion object {
+        val resourceTypeName = "subclasses"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

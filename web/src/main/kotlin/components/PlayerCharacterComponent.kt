@@ -1,6 +1,7 @@
 package components
 
 import AppResources
+import clients.renderResources
 import copyFrom
 import dandd.character.automation.models.classes.CharacterClass
 import dandd.character.automation.models.classes.ProficiencyChoices
@@ -25,9 +26,7 @@ external interface PlayerCharacterState: RState {
     var characterClasses: Map<CharacterClass, HydradetCharacterClass>?
 }
 
-data class HydradetCharacterClass(val levels: Map<CharacterClassLevel, HydratedCharacterClassLevel>,
-                                  val proficiencies: List<CharacterProficiency>,
-                                  val proficiencyChoices: Map<String, CharacterProficiency>)
+data class HydradetCharacterClass(val levels: Map<CharacterClassLevel, HydratedCharacterClassLevel>)
 
 
 data class HydratedCharacterClassLevel(
@@ -72,18 +71,9 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCh
                                         classLevelFeatureChoicesJ.awaitAll())
                             } }
 
-                            val proficienciesJ = playerCLass.proficiencies.map { async {
-                                props.clients.proficienies.getResourceByUri(it.url).bind()
-                            } }
-
-                            val proficiencyChoiceJ = playerCLass.proficiency_choices
-                                    .flatMap { it.from }
-                                    .map { async { it.url to props.clients.proficienies.getResourceByUri(it.url).bind() } }
 
                             playerCLass to HydradetCharacterClass(
-                                    classLevelsJ.awaitAll().toMap(),
-                                    proficienciesJ.awaitAll(),
-                                    proficiencyChoiceJ.awaitAll().toMap())
+                                    classLevelsJ.awaitAll().toMap())//,
                         } }
                         .awaitAll()
                         .toMap()
@@ -162,42 +152,15 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCh
                         }
                     }
                 }
-                if(hydrated.proficiencies.isNotEmpty()) {
-                    collapsable(
-                            elementId = "${model._id}-proficiencies",
-                            cardTitle = {
-                                span { + "Proficiencies" }
-                            }) {
-                        hydrated.proficiencies.map {
-                            characterProficiency(props) {
-                                characterProficiency = it
-                            }
-                        }
-                    }
+
+                renderResources(props, "Proficiencies", model.proficiencies.map { it.url } )
+
+                if(model.proficiencies.isNotEmpty()) {
+                    h3 { "Proficiency Choices" }
                 }
-
-                if(hydrated.proficiencyChoices.isNotEmpty()) {
-                    h3 { +"Proficiency Choices" }
-
-                    model.proficiency_choices.mapIndexed { index, proficiencyChoices ->
-                        div {
-                            collapsable("${model._id}-proficiencyChoices-$index", cardTitle = {
-                                span { +" Choose ${proficiencyChoices.choose} ${proficiencyChoices.type}" }
-                            }) {
-                                proficiencyChoices.from.map {
-                                    hydrated.proficiencyChoices.get(it.url)?.let {
-                                        div("col-10 col-sm-11") {
-                                            characterProficiency(props) {
-                                                characterProficiency = it
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                model.proficiency_choices.map {
+                    renderResources(props, "Choose ${it.choose} ${it.type}", it.from.map { it.url } )
                 }
-
             }
         }
     }

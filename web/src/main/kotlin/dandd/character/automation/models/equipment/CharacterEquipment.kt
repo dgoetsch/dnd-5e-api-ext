@@ -22,14 +22,14 @@ data class CharacterEquipment(
     val weapon_category: String?,
     val weapon_range: String?,
     val category_range: String?,
-    val damage: DamageDiceDamageBonusDamageType?,
+    val damage: DamageDiceDamageType?,
     val range: Range?,
     val properties: List<NameUrl>?,
     val tool_category: String?,
     val desc: List<String>?,
     val vehicle_category: String?,
     val speed: Cost?,
-    val _2h_damage: DamageDiceDamageBonusDamageType?,
+    val _2h_damage: DamageDiceDamageType?,
     val contents: List<Contents>?,
     val capacity: String?,
     val armor_category: String?,
@@ -41,6 +41,7 @@ data class CharacterEquipment(
     val special: List<String>?
 ) {
     companion object {
+        val resourceTypeName = "equipment"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }
@@ -79,7 +80,7 @@ data class CharacterEquipment(
                         },
                         "damage".nullable {
                             obj {
-                                DamageDiceDamageBonusDamageType.from(node).bind()
+                                DamageDiceDamageType.from(node).bind()
                             }
                         },
                         "range".nullable {
@@ -112,7 +113,7 @@ data class CharacterEquipment(
                         },
                         "2h_damage".nullable {
                             obj {
-                                DamageDiceDamageBonusDamageType.from(node).bind()
+                                DamageDiceDamageType.from(node).bind()
                             }
                         },
                         "contents".nullable {

@@ -15,6 +15,7 @@ data class Spells(
     val spell: UrlName
 ) {
     companion object {
+        val resourceTypeName = "subclasses"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

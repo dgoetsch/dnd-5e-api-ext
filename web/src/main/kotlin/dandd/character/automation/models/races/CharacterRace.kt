@@ -32,6 +32,7 @@ data class CharacterRace(
     val language_options: ChooseTypeFrom?
 ) {
     companion object {
+        val resourceTypeName = "races"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

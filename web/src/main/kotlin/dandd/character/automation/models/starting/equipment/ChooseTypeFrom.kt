@@ -16,6 +16,7 @@ data class ChooseTypeFrom(
     val from: List<StartingEquipment>
 ) {
     companion object {
+        val resourceTypeName = "starting-equipment"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

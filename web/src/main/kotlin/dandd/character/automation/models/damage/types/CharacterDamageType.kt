@@ -18,6 +18,7 @@ data class CharacterDamageType(
     val url: String
 ) {
     companion object {
+        val resourceTypeName = "damage-types"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

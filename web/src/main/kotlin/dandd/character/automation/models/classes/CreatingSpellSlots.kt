@@ -15,6 +15,7 @@ data class CreatingSpellSlots(
     val sorcery_point_cost: Int
 ) {
     companion object {
+        val resourceTypeName = "classes"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

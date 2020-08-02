@@ -9,6 +9,8 @@ import react.dom.*
 import kotlin.browser.document
 import kotlin.browser.window
 import kotlinext.js.require
+import kotlin.random.Random
+
 fun main() {
 //    require("bootstrap")
     window.onload = {
@@ -25,6 +27,7 @@ class App: RComponent<RProps, AppState>() {
     override fun AppState.init() {
         coroutineScope = MainScope()
         clients = Clients()
+        random = Random.Default
         playerService = StaticPlayerService()
         playerCharacters = emptyList()
         coroutineScope.launch {

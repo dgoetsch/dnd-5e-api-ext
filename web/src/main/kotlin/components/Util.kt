@@ -1,13 +1,16 @@
 package components
 
-import kotlinx.html.A
-import kotlinx.html.DIV
+import kotlinx.html.*
+import kotlinx.html.js.onClickFunction
 import react.RBuilder
 import react.dom.RDOMBuilder
 import react.dom.a
+import react.dom.button
 import react.dom.div
+import kotlin.browser.document
 
 typealias Builder<T> = RDOMBuilder<T>.() ->Unit
+
 fun RBuilder.card(
         titleTag: Builder<DIV>? = null,
         cardTextTag: Builder<DIV>? = null,
@@ -29,5 +32,45 @@ fun RBuilder.card(
             }
         }
         cardFooter?.let { div("card-footer text-muted", it)}
+    }
+}
+
+fun RBuilder.collapsable(
+        elementId: String,
+        cardTitle: Builder<BUTTON> = { },
+        beforeShow: (Boolean) -> Unit = { },
+        afterShow: (Boolean) -> Unit = { },
+        body: Builder<DIV>
+) {
+    div {
+        var isVisible = false
+        card(
+                cardHeader = {
+                    button(classes = "btn btn-primary",
+                            type = ButtonType.button) {
+                        attrs {
+                            id = "$elementId-button"
+                            onClickFunction = {
+                                isVisible = !isVisible
+                                val clazz = if (isVisible) "show" else "collapse"
+                                beforeShow(isVisible)
+                                document.getElementById(elementId)
+                                        ?.className = clazz
+                                document.getElementById("$elementId-button")
+                                        ?.className =  if(isVisible) "btn btn-primary" else "btn btn-primary text-muted"
+                                afterShow(isVisible)
+                            }
+                        }
+                        cardTitle()
+                    }
+                },
+                cardBodyContent = {
+                    div("collapse") {
+                        attrs {
+                            id = elementId
+                        }
+                        body()
+                    }
+                })
     }
 }

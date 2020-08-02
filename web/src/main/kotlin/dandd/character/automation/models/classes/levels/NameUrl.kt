@@ -15,6 +15,7 @@ data class NameUrl(
     val url: String
 ) {
     companion object {
+        val resourceTypeName = "classes-levels"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

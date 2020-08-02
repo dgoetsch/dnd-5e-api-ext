@@ -20,6 +20,7 @@ data class CharacterSpellcasting(
     val url: String
 ) {
     companion object {
+        val resourceTypeName = "spellcasting"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

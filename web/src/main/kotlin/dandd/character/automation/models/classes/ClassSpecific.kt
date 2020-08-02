@@ -45,6 +45,7 @@ data class ClassSpecific(
     val destroy_undead_cr: Double?
 ) {
     companion object {
+        val resourceTypeName = "classes"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

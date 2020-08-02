@@ -25,6 +25,7 @@ data class CharacterClass(
     val spellcasting: UrlClass?
 ) {
     companion object {
+        val resourceTypeName = "classes"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

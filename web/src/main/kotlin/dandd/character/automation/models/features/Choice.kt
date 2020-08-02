@@ -16,6 +16,7 @@ data class Choice(
     val from: List<UrlName>
 ) {
     companion object {
+        val resourceTypeName = "features"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

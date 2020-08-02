@@ -25,6 +25,7 @@ data class CharacterFeature(
     val reference: String?
 ) {
     companion object {
+        val resourceTypeName = "features"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

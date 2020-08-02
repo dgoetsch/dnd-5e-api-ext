@@ -15,6 +15,7 @@ data class Skills(
     val name: String
 ) {
     companion object {
+        val resourceTypeName = "ability-scores"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

@@ -16,6 +16,7 @@ data class AbilityBonuses(
     val bonus: Int
 ) {
     companion object {
+        val resourceTypeName = "subraces"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

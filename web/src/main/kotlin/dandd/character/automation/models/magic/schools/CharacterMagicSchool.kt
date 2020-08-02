@@ -18,6 +18,7 @@ data class CharacterMagicSchool(
     val url: String
 ) {
     companion object {
+        val resourceTypeName = "magic-schools"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

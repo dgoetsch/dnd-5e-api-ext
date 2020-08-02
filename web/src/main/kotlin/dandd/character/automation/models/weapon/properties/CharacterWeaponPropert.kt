@@ -18,6 +18,7 @@ data class CharacterWeaponPropert(
     val url: String
 ) {
     companion object {
+        val resourceTypeName = "weapon-properties"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

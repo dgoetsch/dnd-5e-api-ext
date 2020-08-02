@@ -20,6 +20,7 @@ data class CharacterTrait(
     val url: String
 ) {
     companion object {
+        val resourceTypeName = "traits"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

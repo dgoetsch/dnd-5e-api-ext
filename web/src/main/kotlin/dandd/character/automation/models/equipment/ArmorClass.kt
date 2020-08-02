@@ -16,6 +16,7 @@ data class ArmorClass(
     val max_bonus: Int?
 ) {
     companion object {
+        val resourceTypeName = "equipment"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

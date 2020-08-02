@@ -25,6 +25,7 @@ data class CharacterSubrace(
     val url: String
 ) {
     companion object {
+        val resourceTypeName = "subraces"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }

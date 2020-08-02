@@ -15,6 +15,7 @@ data class DiceCountDiceValue(
     val dice_value: Int
 ) {
     companion object {
+        val resourceTypeName = "classes"
         val parseResponseBody = { jsonString: String -> Either
             .catching { JSON.parse<Json>(jsonString) }
             .mapLeft { JsonParse(it) }
