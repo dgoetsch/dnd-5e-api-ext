@@ -2,7 +2,6 @@ package clients
 
 import AppResources
 import appComponent
-import components.CharacterClassComponent
 import components.collapsable
 import generateElementId
 import kotlinx.coroutines.async
@@ -46,6 +45,7 @@ class MultiLoaderComponent(props: MultiLoaderProps): AppComponent<MultiLoaderPro
 
     override fun RBuilder.render() {
         collapsable(uniqueElementId(),
+                show = state.loaded?:false,
                 cardTitle = { span { +props.title } },
                 beforeShow = {
                     if(state.loaded == false) {

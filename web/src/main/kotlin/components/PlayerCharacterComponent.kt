@@ -1,6 +1,7 @@
 package components
 
 import AppResources
+import clients.AppComponent
 import clients.renderResources
 import copyFrom
 import dandd.character.automation.models.classes.CharacterClass
@@ -23,11 +24,8 @@ import web.core.suspendBindRight
 
 external interface PlayerCharacterState: RState {
     var characterRace: CharacterRace?
-    var characterClasses: Map<CharacterClass, HydradetCharacterClass>?
+    var characterClasses: Map<CharacterClass, List<CharacterClassLevel>>?
 }
-
-data class HydradetCharacterClass(val levels: Map<CharacterClassLevel, HydratedCharacterClassLevel>)
-
 
 data class HydratedCharacterClassLevel(
         val features: List<CharacterFeature>,
@@ -47,7 +45,7 @@ fun RBuilder.playerCharacter(appResources: AppResources, handler: PlayerCharacte
 
 }
 
-class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCharacterProps, PlayerCharacterState>(props) {
+class PlayerCharacterComponent(props: PlayerCharacterProps): AppComponent<PlayerCharacterProps, PlayerCharacterState>(props) {
     override fun PlayerCharacterState.init(props: PlayerCharacterProps) {
         props.coroutineScope.launch {
             ApiClient {
@@ -57,23 +55,13 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCh
                         .map { (k, v) -> async {
                             val playerCLass = props.clients.classes.getCharacterClass(k).bind()
 
-                            val classLevelsJ = (1..v).map { async {
+                            val classLevels = (1..v).map { async {
                                 val classLevel = props.clients.classLevels.getCharacterClassLevel(playerCLass.index, it.toString()).bind()
-                                val classLevelFeaturesJ = classLevel.features.map { async {
-                                    props.clients.features.getResourceByUri(it.url).bind()
-                                } }
-                                val classLevelFeatureChoicesJ = classLevel.feature_choices.map { async {
-                                    props.clients.features.getResourceByUri(it.url).bind()
-                                } }
-
-                                classLevel to HydratedCharacterClassLevel(
-                                        classLevelFeaturesJ.awaitAll(),
-                                        classLevelFeatureChoicesJ.awaitAll())
-                            } }
+                                classLevel
+                            } }.awaitAll()
 
 
-                            playerCLass to HydradetCharacterClass(
-                                    classLevelsJ.awaitAll().toMap())//,
+                            playerCLass to classLevels
                         } }
                         .awaitAll()
                         .toMap()
@@ -112,7 +100,7 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCh
                     }
                 }
             }
-            state.characterClasses?.forEach { (model, hydrated) ->
+            state.characterClasses?.forEach { (model, levels) ->
 
                 div {
                     characterClass(props) {
@@ -121,35 +109,26 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): RComponent<PlayerCh
                 }
                 div {
                     characterClassLevel(props) {
-                        characterClassLevel = hydrated.levels.keys.toList()
-                        currentLevel = hydrated.levels.size
+                        characterClassLevel = levels
+                        currentLevel = levels.size
                     }
                 }
 
-                if(hydrated.levels.any { it.value.features.isNotEmpty() }) {
+                val levelsWithFeatures = levels.filter { it.features.isNotEmpty() }
+                if(levelsWithFeatures.isNotEmpty()) {
                     h3 { +"Features" }
-                    hydrated.levels.forEach { (classLevel, features) ->
-                        if (features.features.isNotEmpty()) {
-                            h4 { +"Level ${classLevel.level}" }
-                            features.features.forEach {
-                                characterFeature(props) {
-                                    feature = it
-                                }
-                            }
+                    levelsWithFeatures.forEach { classLevel ->
+                        if (classLevel.features.isNotEmpty()) {
+                            renderResources("Level ${classLevel.level}", classLevel.features.map { it.url })
                         }
                     }
                 }
-                if(hydrated.levels.any { it.value.featureChoices.isNotEmpty() }) {
+
+                val levelsWithFeatureChoices = levels.filter { it.feature_choices.isNotEmpty() }
+                if(levelsWithFeatureChoices.isNotEmpty()) {
                     h3 { +"Features Choices" }
-                    hydrated.levels.forEach { (classLevel, features) ->
-                        if (features.featureChoices.isNotEmpty()) {
-                            h4 { +"Level ${classLevel.level}" }
-                            features.featureChoices.forEach {
-                                characterFeature(props) {
-                                    feature = it
-                                }
-                            }
-                        }
+                    levelsWithFeatureChoices.forEach { classLevel ->
+                        renderResources("Level ${classLevel.level}", classLevel.feature_choices.map{ it.url })
                     }
                 }
 

@@ -37,13 +37,14 @@ fun RBuilder.card(
 
 fun RBuilder.collapsable(
         elementId: String,
+        show: Boolean = false,
         cardTitle: Builder<BUTTON> = { },
         beforeShow: (Boolean) -> Unit = { },
         afterShow: (Boolean) -> Unit = { },
         body: Builder<DIV>
 ) {
     div {
-        var isVisible = false
+        var isVisible = show
         card(
                 cardHeader = {
                     button(classes = "btn btn-primary",
@@ -65,7 +66,8 @@ fun RBuilder.collapsable(
                     }
                 },
                 cardBodyContent = {
-                    div("collapse") {
+                    val clazz = if(isVisible) { "show" } else { "collapse" }
+                    div(clazz) {
                         attrs {
                             id = elementId
                         }
