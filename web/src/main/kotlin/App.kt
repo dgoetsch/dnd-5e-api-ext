@@ -12,7 +12,7 @@ import kotlinext.js.require
 import kotlin.random.Random
 
 fun main() {
-//    require("bootstrap")
+    require("bootstrap")
     window.onload = {
         document.body!!.insertAdjacentHTML("afterbegin", "<div class='container' id='root'></div>")
         render(document.getElementById("root")) {
@@ -63,7 +63,7 @@ class App: RComponent<RProps, AppState>() {
                     attrs {
                         set("aria-hidden", "true")
                     }
-                    +"&times;"
+                    +"Acknowledge"
                 }
 
             }

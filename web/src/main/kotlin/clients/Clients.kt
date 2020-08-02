@@ -32,6 +32,7 @@ data class Renderable<T>(val domain: T) {
         when(domain) {
             is CharacterAbilityScore -> {}
             is CharacterClass -> characterClass(props) { characterClass = domain }
+            is CharacterClassLevel -> characterClassLevel(props) { characterClassLevel = domain }
             is CharacterFeature -> characterFeature(props) { feature = domain }
             is CharacterProficiency -> characterProficiency(props) { characterProficiency = domain }
 

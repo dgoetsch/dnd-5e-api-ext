@@ -25,7 +25,7 @@ import kotlin.test.fail
 
 class ProficiencyValidor {
 
-    @Test
+//    @Test
     fun validate_references_source() {
         val urlBase = "http://localhost:8099"
         val mapper = jacksonObjectMapper()

@@ -60,7 +60,6 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): AppComponent<Player
                                 classLevel
                             } }.awaitAll()
 
-
                             playerCLass to classLevels
                         } }
                         .awaitAll()
@@ -100,17 +99,19 @@ class PlayerCharacterComponent(props: PlayerCharacterProps): AppComponent<Player
                     }
                 }
             }
-            state.characterClasses?.forEach { (model, levels) ->
 
+            state.characterClasses?.forEach { (model, levels) ->
                 div {
                     characterClass(props) {
                         characterClass = model
                     }
                 }
+
                 div {
-                    characterClassLevel(props) {
-                        characterClassLevel = levels
-                        currentLevel = levels.size
+                    levels.find { it.level == levels.size }?.let {
+                        characterClassLevel(props) {
+                            characterClassLevel = it
+                        }
                     }
                 }
 

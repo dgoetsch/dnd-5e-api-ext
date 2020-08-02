@@ -12,8 +12,7 @@ import kotlin.reflect.KClass
 
 
 external interface CharacterClassLevelProps: RProps, AppResources {
-    var characterClassLevel: List<CharacterClassLevel>
-    var currentLevel: Int
+    var characterClassLevel: CharacterClassLevel
 }
 
 external interface CharacterClassLevelState: RState { }
@@ -24,18 +23,16 @@ fun RBuilder.characterClassLevel(parent: AppResources, handler: CharacterClassLe
 class CharacterClassLevelComponent(props: CharacterClassLevelProps): RComponent<CharacterClassLevelProps, CharacterClassLevelState>(props) {
     override fun RBuilder.render() {
         div {
-            props.characterClassLevel.find { it.level == props.currentLevel }?.let { currentClassLevel ->
-                div {
-                    span { strong { +"Proficiency Bonus "  } }
-                    span { +currentClassLevel.prof_bonus.toString() }
-                }
-
-                currentClassLevel.spellcasting
-                        ?.let {
-                            h5 { +"Spellcasting" }
-                            renderSpellCasting(it)
-                        }
+            div {
+                span { strong { +"Proficiency Bonus "  } }
+                span { +props.characterClassLevel.prof_bonus.toString() }
             }
+
+            props.characterClassLevel.spellcasting
+                    ?.let {
+                        h5 { +"Spellcasting" }
+                        renderSpellCasting(it)
+                    }
         }
     }
 
